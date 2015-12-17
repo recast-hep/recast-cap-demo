@@ -1,3 +1,4 @@
+import os
 import cap
 import importlib
 import subprocess
@@ -187,11 +188,11 @@ resources: {resources}
 
   in_docker_cmd = '{envmodifier} {command}'.format(envmodifier = envmod, command = command)
 
-  docker_mod = '-v $PWD/workdir:/workdir'
+  docker_mod = '-v {}:/workdir'.format(os.path.abspath(global_context['workdir']))
   if do_cvmfs:
     docker_mod+=' -v /cvmfs:/cvmfs'
   if do_grid:
-    docker_mod+=' -v /root/recast_auth:/recast_auth'
+    docker_mod+=' -v /home/recast/recast_auth:/recast_auth'
 
   
   in_docker_host = 'echo $(hostname) > /workdir/{nodename}.hostname && {cmd}'.format(nodename = json['name'], cmd = in_docker_cmd)
@@ -201,16 +202,17 @@ resources: {resources}
     fullest_command = 'cvmfs_config probe && {}'.format(fullest_command)
 
 
-
+  print global_context
   docker_pull_cmd = 'docker pull {container}'.format(container = container)
   docker_stop_cmd = 'docker stop $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
   docker_rm_cmd   = 'docker rm $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
   print '==> workdir {}'.format(global_context['workdir'])
 
-  return
+
   try:
-    subprocess.check_call(docker_pull_cmd,shell = True)
-    subprocess.check_call(fullest_command,shell = True)
+    with open('{}/{}.log'.format(global_context['workdir'],json['name']),'w') as logfile:
+      subprocess.check_call(docker_pull_cmd,shell = True, stderr = subprocess.STDOUT, stdout = logfile)
+      subprocess.check_call(fullest_command,shell = True, stderr = subprocess.STDOUT, stdout = logfile)
   except subprocess.CalledProcessError:
     print 'subprocess failed'
     raise RuntimeError
