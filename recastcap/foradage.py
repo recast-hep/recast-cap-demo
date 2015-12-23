@@ -1,9 +1,12 @@
+
 import os
 import cap
 import importlib
 import subprocess
 import adage.backends
-
+import time
+import psutil
+import sys
 
 class RECAST_Task(object):
   def __init__(self,func):
@@ -155,9 +158,19 @@ def build_command(node):
 
   return command
 
+
+import logging
+
 @RCST
 def runNode(json,global_context):
-  print json['name']
+  nodelog = '{}/{}.node.log'.format(os.path.abspath(global_context['workdir']),json['name'])
+  log = logging.getLogger('node_logger_{}'.format(json['name']))
+  fh  = logging.FileHandler(nodelog)
+  fh.setLevel(logging.DEBUG)
+  log.addHandler(fh)
+
+  log.info('starting log for node: {}'.format(json['name']))
+
   command = build_command(json)
 
   spec = cap.load_spec(json['spec'])
@@ -181,9 +194,9 @@ resources: {resources}
   do_cvmfs = 'CVMFS' in environment['resources']
   do_grid  = 'GRID' in environment['resources']
   
-
-  
-  print 'dogrid: {} do_cvmfs: {}'.format(do_grid,do_cvmfs)
+  log.info(report)
+  log.info('dogrid: {} do_cvmfs: {}'.format(do_grid,do_cvmfs))
+ 
   envmod = 'source {} &&'.format(environment['env']) if environment['env'] else ''
 
   in_docker_cmd = '{envmodifier} {command}'.format(envmodifier = envmod, command = command)
@@ -197,26 +210,70 @@ resources: {resources}
   
   in_docker_host = 'echo $(hostname) > /workdir/{nodename}.hostname && {cmd}'.format(nodename = json['name'], cmd = in_docker_cmd)
 
-  fullest_command = 'docker run {docker_mod} {container} sh -c \'{in_dock}\''.format(docker_mod = docker_mod, container = container, in_dock = in_docker_host)
+  fullest_command = 'docker run --rm {docker_mod} {container} sh -c \'{in_dock}\''.format(docker_mod = docker_mod, container = container, in_dock = in_docker_host)
   if do_cvmfs:
     fullest_command = 'cvmfs_config probe && {}'.format(fullest_command)
 
 
-  print global_context
+  log.info('global context: \n {}'.format(global_context))
+
   docker_pull_cmd = 'docker pull {container}'.format(container = container)
   docker_stop_cmd = 'docker stop $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
   docker_rm_cmd   = 'docker rm $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
-  print '==> workdir {}'.format(global_context['workdir'])
 
+  log.info('docker pull command: \n  {}'.format(docker_pull_cmd))
+  log.info('docker run  command: \n  {}'.format(fullest_command))
 
   try:
-    with open('{}/{}.log'.format(global_context['workdir'],json['name']),'w') as logfile:
-      subprocess.check_call(docker_pull_cmd,shell = True, stderr = subprocess.STDOUT, stdout = logfile)
-      subprocess.check_call(fullest_command,shell = True, stderr = subprocess.STDOUT, stdout = logfile)
-  except subprocess.CalledProcessError:
-    print 'subprocess failed'
-    raise RuntimeError
+    with open('{}/{}.pull.log'.format(global_context['workdir'],json['name']),'w') as logfile:
+      proc = subprocess.Popen(docker_pull_cmd,shell = True, stderr = subprocess.STDOUT, stdout = logfile)
+      log.info('started pull subprocess with pid {}. now wait to finish'.format(proc.pid))
+      time.sleep(0.5)
+      log.info('process children: {}'.format([x for x in psutil.Process(proc.pid).children(recursive = True)]))
+      proc.communicate()
+      log.info('pull subprocess finished. return code: {}'.format(proc.returncode))
+      if proc.returncode:
+        log.error('non-zero return code raising exception')
+        exc =  subprocess.CalledProcessError()
+        exc.returncode = proc.returncode
+        exc.cmd = docker_pull_cmd
+        raise exc
+      log.info('moving on from pull')
+  except RuntimeError as e:
+    log.info('caught RuntimeError')
+    raise e
+  except subprocess.CalledProcessError as exc:
+    log.error('subprocess failed. code: {},  command {}'.format(exc.returncode,exc.cmd))
+    raise RuntimeError('failed docker subprocess in runNode.')
+  except:
+    log.info("Unexpected error: {}".format(sys.exc_info()))
+    raise
   finally:
-    subprocess.check_call(docker_stop_cmd, shell = True)
-    subprocess.check_call(docker_rm_cmd, shell = True)
-  
+    log.info('finally for pull')
+
+  try:
+    with open('{}/{}.run.log'.format(global_context['workdir'],json['name']),'w') as logfile:
+      proc = subprocess.Popen(fullest_command,shell = True, stderr = subprocess.STDOUT, stdout = logfile)
+      log.info('started run subprocess with pid {}. now wait to finish'.format(proc.pid))
+      time.sleep(0.5)
+      log.info('process children: {}'.format([x for x in psutil.Process(proc.pid).children(recursive = True)]))
+      proc.communicate()
+      log.info('pull subprocess finished. return code: {}'.format(proc.returncode))
+      if proc.returncode:
+        log.error('non-zero return code raising exception')
+      	exc =  subprocess.CalledProcessError()
+       	exc.returncode = proc.returncode
+       	exc.cmd = docker_pull_cmd
+       	raise exc
+      log.info('moving on from run')
+
+  except subprocess.CalledProcessError as exc:
+    log.error('subprocess failed. code: {},  command {}'.format(exc.returncode,exc.cmd))
+    raise RuntimeError('failed docker subprocess in runNode.')
+  except:
+    log.error("Unexpected error: {}".format(sys.exc_info()))
+    raise
+  finally:
+    log.info('finally for run')
+
+  log.info('reached return for runNode')

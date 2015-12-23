@@ -12,6 +12,7 @@ setup(
   install_requires = [
     'adage',
     'click',
+    'psutil',
   ],
   entry_points = {
       'console_scripts': ['recastworkflow-capsteer=recastcap.steering:main'],

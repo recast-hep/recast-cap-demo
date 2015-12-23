@@ -29,8 +29,8 @@ def recast(ctx):
       pass
     time.sleep(0.01)
 
-  log.info('finished')
+  log.info('workflow process terminated task')
   if proc.returncode:
     log.error('workflow failed, raising error')
-    raise RuntimeError
+    raise RuntimeError('failed workflow process return code {}'.format(proc.returncode))
     
