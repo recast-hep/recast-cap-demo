@@ -3,7 +3,7 @@ import pkg_resources
 import os
 import requests
 
-HOST = 'http://pseudo-cap.herokuapp.com'
+HOST = os.environ['CAP_HOST']
 
 def api_getcall(endpoint):
     r = requests.get('{}/api/{}'.format(HOST,endpoint), auth = (os.environ['CAP_USER'],os.environ['CAP_ACCESSKEY']))
