@@ -5,20 +5,21 @@ import foradage
 from foradage import runNode
   
 def single_node_from_context(workflow,step,dag,context,nodename):
-  stepspec = cap.load_spec(step['spec'])
+
+  stepspec = cap.step(*(step['step_spec'].split('/',1)))
   
   
   node = {
     'name':nodename,
     'attributes': {k:v.format(**context) for k,v in step['attributes'].iteritems()},
-    'spec':stepspec['definition']['node_spec']
+    'node_spec':stepspec['definition']['node_spec']
   }
 
   node = adage.mknode(dag,task = runNode.s(node,context), nodename = nodename)
   step['scheduled_nodes'] = [node]
   
 def map_from_dep_output(workflow,step,dag,context,nodename_template,dependency,outputkey,to_input,to_output,output_template):
-  stepspec = cap.load_spec(step['spec'])
+  stepspec = cap.step(*(step['step_spec'].split('/',1)))
 
   dep = [x for x in workflow if x['name'] == dependency][0]
 
@@ -49,7 +50,7 @@ def map_from_dep_output(workflow,step,dag,context,nodename_template,dependency,o
       index += 1
 
 def reduce_from_dep_output(workflow,step,dag,context,nodename,dependency,outputkey,to_input):
-  stepspec = cap.load_spec(step['spec'])
+  stepspec = cap.step(*(step['step_spec'].split('/',1)))
   dep = [x for x in workflow if x['name'] == dependency][0]
   step['scheduled_nodes'] = []
 
@@ -70,7 +71,7 @@ def reduce_from_dep_output(workflow,step,dag,context,nodename,dependency,outputk
   node = {
     'name':nodename,
     'attributes':attributes,
-    'spec':stepspec['definition']['node_spec'],
+    'node_spec':stepspec['definition']['node_spec'],
     'used_inputs':used_inputs
   }
   

@@ -10,6 +10,7 @@ import subprocess
 import os
 import click
 import pkg_resources
+import cap
 
 def run_cap_analysis(workdir,analysis):
   log = logging.getLogger(__name__)
@@ -28,9 +29,7 @@ def run_cap_analysis(workdir,analysis):
   }
 
   steps_graph = nx.DiGraph()
-  path = pkg_resources.resource_filename('recastcap','capdata/{}/workflow.json'.format(analysis))
-
-  workflow = json.load(open(path))
+  workflow = cap.workflow(analysis)
 
   for step in workflow:
     steps_graph.add_node(step['name'],step)

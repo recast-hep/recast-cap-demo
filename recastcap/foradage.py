@@ -62,6 +62,7 @@ class RECAST_Rule(object):
     kwargs = sched['kwargs']
     func(self.workflow,self.stepinfo,dag,self.global_context,*args,**kwargs)
     
+import traceback
 class RECAST_Result(object):
   def __init__(self,resultobj,task):
     self.resultobj = resultobj
@@ -75,17 +76,27 @@ class RECAST_Result(object):
   def get(self):
     if self.result:
       return self.result
+      
+    try:
+        taskresult = self.resultobj.get()
+    except:
+        t,e,tb = sys.exc_info()
+        print "taskresult retrieval failed error: {} {}".format(t,e)
+        print traceback
+        traceback.print_tb(tb)
+        raise
+        
     result = {
       'RECAST_metadata':{
         'outputs':self.publish(self.task.node)
       },
-      'taskresult':self.resultobj.get()
+      'taskresult':taskresult
     }
     self.result = result
     return self.result
 
   def publish(self,node):
-    spec = cap.load_spec(node['spec'])
+    spec = cap.node(*(node['node_spec'].split('/',1)))
     publ = spec['publisher']
     modulename,funcname = publ['name'].split(':')
     mod = importlib.import_module('recastcap.{}'.format(modulename))  
@@ -109,7 +120,8 @@ class RECAST_Backend(adage.backends.MultiProcBackend):
 def build_command(node):
   print 'build'
   attr = node['attributes']
-  spec = cap.load_spec(node['spec'])
+  spec = cap.node(*(node['node_spec'].split('/',1)))
+
   cmd  =  spec['definition']['name']
   
   filled_args = []
@@ -173,7 +185,7 @@ def runNode(json,global_context):
 
   command = build_command(json)
 
-  spec = cap.load_spec(json['spec'])
+  spec = cap.node(*(json['node_spec'].split('/',1)))
   environment = spec['environment']['definition']
   
   container = environment['docker_container']
@@ -203,23 +215,28 @@ resources: {resources}
 
   docker_mod = '-v {}:/workdir'.format(os.path.abspath(global_context['workdir']))
   if do_cvmfs:
-    docker_mod+=' -v /cvmfs:/cvmfs'
+    if not 'RECAST_CVMFS_LOCATION' in os.environ:
+        docker_mod+=' -v /cvmfs:/cvmfs'
+    else:
+        docker_mod+=' -v {}:/cvmfs'.format(os.environ['RECAST_CVMFS_LOCATION'])
   if do_grid:
-    docker_mod+=' -v /home/recast/recast_auth:/recast_auth'
-
+    if not 'RECAST_AUTH_LOCATION' in os.environ:
+        docker_mod+=' -v /home/recast/recast_auth:/recast_auth'
+    else:
+        docker_mod+=' -v {}:/recast_auth'.format(os.environ['RECAST_AUTH_LOCATION'])
   
   in_docker_host = 'echo $(hostname) > /workdir/{nodename}.hostname && {cmd}'.format(nodename = json['name'], cmd = in_docker_cmd)
 
-  fullest_command = 'docker run --rm {docker_mod} {container} sh -c \'{in_dock}\''.format(docker_mod = docker_mod, container = container, in_dock = in_docker_host)
+  fullest_command = 'echo docker run --rm {docker_mod} {container} sh -c \'{in_dock}\''.format(docker_mod = docker_mod, container = container, in_dock = in_docker_host)
   if do_cvmfs:
     fullest_command = 'cvmfs_config probe && {}'.format(fullest_command)
+    # fullest_command = 'eval $(docker-machine env default) && echo cvmfs_config probe && {}'.format(fullest_command)
 
 
   log.info('global context: \n {}'.format(global_context))
 
-  docker_pull_cmd = 'docker pull {container}'.format(container = container)
-  docker_stop_cmd = 'docker stop $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
-  docker_rm_cmd   = 'docker rm $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
+  docker_pull_cmd = 'echo docker pull {container}'.format(container = container)
+  docker_stop_cmd = 'echo docker stop $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
 
   log.info('docker pull command: \n  {}'.format(docker_pull_cmd))
   log.info('docker run  command: \n  {}'.format(fullest_command))
@@ -234,10 +251,7 @@ resources: {resources}
       log.info('pull subprocess finished. return code: {}'.format(proc.returncode))
       if proc.returncode:
         log.error('non-zero return code raising exception')
-        exc =  subprocess.CalledProcessError()
-        exc.returncode = proc.returncode
-        exc.cmd = docker_pull_cmd
-        raise exc
+        raise subprocess.CalledProcessError(returncode =  proc.returncode, cmd = docker_pull_cmd)
       log.info('moving on from pull')
   except RuntimeError as e:
     log.info('caught RuntimeError')

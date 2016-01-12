@@ -13,6 +13,7 @@ setup(
     'adage',
     'click',
     'psutil',
+    'requests'
   ],
   entry_points = {
       'console_scripts': ['recastworkflow-capsteer=recastcap.steering:main'],
