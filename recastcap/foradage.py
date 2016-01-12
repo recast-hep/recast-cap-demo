@@ -275,10 +275,7 @@ resources: {resources}
       log.info('pull subprocess finished. return code: {}'.format(proc.returncode))
       if proc.returncode:
         log.error('non-zero return code raising exception')
-      	exc =  subprocess.CalledProcessError()
-       	exc.returncode = proc.returncode
-       	exc.cmd = docker_pull_cmd
-       	raise exc
+      	raise subprocess.CalledProcessError(returncode =  proc.returncode, cmd = fullest_command)
       log.info('moving on from run')
 
   except subprocess.CalledProcessError as exc:
