@@ -227,7 +227,7 @@ resources: {resources}
   
   in_docker_host = 'echo $(hostname) > /workdir/{nodename}.hostname && {cmd}'.format(nodename = json['name'], cmd = in_docker_cmd)
 
-  fullest_command = 'echo docker run --rm {docker_mod} {container} sh -c \'{in_dock}\''.format(docker_mod = docker_mod, container = container, in_dock = in_docker_host)
+  fullest_command = 'docker run --rm {docker_mod} {container} sh -c \'{in_dock}\''.format(docker_mod = docker_mod, container = container, in_dock = in_docker_host)
   if do_cvmfs:
     fullest_command = 'cvmfs_config probe && {}'.format(fullest_command)
     # fullest_command = 'eval $(docker-machine env default) && echo cvmfs_config probe && {}'.format(fullest_command)
@@ -235,8 +235,8 @@ resources: {resources}
 
   log.info('global context: \n {}'.format(global_context))
 
-  docker_pull_cmd = 'echo docker pull {container}'.format(container = container)
-  docker_stop_cmd = 'echo docker stop $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
+  docker_pull_cmd = 'docker pull {container}'.format(container = container)
+  docker_stop_cmd = 'docker stop $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
 
   log.info('docker pull command: \n  {}'.format(docker_pull_cmd))
   log.info('docker run  command: \n  {}'.format(fullest_command))
