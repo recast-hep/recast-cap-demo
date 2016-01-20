@@ -6,8 +6,9 @@ import steering_api
 @click.command()
 @click.argument('workdir')
 @click.argument('analysis')
-def main(workdir,analysis):
-  steering_api.run_cap_analysis(workdir,analysis)
+@click.argument('global_context')
+def main(workdir,analysis,global_context):
+  steering_api.run_cap_analysis(workdir,analysis,global_context)
 
 
 if __name__ == '__main__':

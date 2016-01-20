@@ -11,8 +11,9 @@ import os
 import click
 import pkg_resources
 import cap
+import yaml
 
-def run_cap_analysis(workdir,analysis):
+def run_cap_analysis(workdir,analysis,context_yaml):
   log = logging.getLogger(__name__)
   logging.basicConfig(level = logging.INFO)
 
@@ -20,14 +21,15 @@ def run_cap_analysis(workdir,analysis):
 
   g = adage.mk_dag()
 
-  global_context = {
-    'workdir':workdir,
-    'dataset':'mc12_8TeV.220255.MadGraphPythia_AUET2B_CTEQ6L1_pMSSM_EW_108925778_DiLepton.merge.NTUP_SUSY.e3203_a220_a205_r4540_p1512/',
-    'efficiency_file':'/workdir/220255.eff',
-    'xsections_file':'/workdir/xsections.root',
-    'modelName':108925778
-  }
+  global_context = yaml.load(open(context_yaml))
+  global_context.update(workdir = 'workdir')
 
+  for k,v in global_context.iteritems():
+      candpath = '{}/inputs/{}'.format(workdir,v)
+      if os.path.exists(candpath):
+          global_context[k] = '/workdir/inputs/{}'.format(v)
+
+  
   steps_graph = nx.DiGraph()
   workflow = cap.workflow(analysis)
 

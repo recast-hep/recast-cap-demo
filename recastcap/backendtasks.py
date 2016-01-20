@@ -13,10 +13,9 @@ def recast(ctx):
   workdir = 'workdirs/{}'.format(ctx['jobguid'])
   analysis = 'dilepton_analysis'
 
-  
   subprocess.check_call('cp {workdir}/inputs/* {workdir}'.format(workdir = workdir), shell = True)
 
-  proc = subprocess.Popen('recastworkflow-capsteer {} {}'.format(workdir,analysis), shell = True, stderr = subprocess.STDOUT, stdout = subprocess.PIPE)
+  proc = subprocess.Popen('recastworkflow-capsteer {} {}'.format(workdir,analysis,'{}/inputs/input.yaml'.format(workdir)), shell = True, stderr = subprocess.STDOUT, stdout = subprocess.PIPE)
   while proc.poll() is None:
     s = proc.stdout.readline()
     try:
