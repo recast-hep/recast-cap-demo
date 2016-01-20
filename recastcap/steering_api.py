@@ -22,7 +22,7 @@ def run_cap_analysis(workdir,analysis,context_yaml):
   g = adage.mk_dag()
 
   global_context = yaml.load(open(context_yaml))
-  global_context.update(workdir = 'workdir')
+  global_context.update(workdir = workdir)
 
   for k,v in global_context.iteritems():
       candpath = '{}/inputs/{}'.format(workdir,v)
