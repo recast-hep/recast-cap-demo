@@ -4,17 +4,14 @@ import adage
 import foradage
 from foradage import runNode
   
-def single_node_from_context(workflow,step,dag,context,nodename):
-
-  stepspec = cap.step(*(step['step_spec'].split('/',1)))
-  
-  
+def single_node_from_context(workflow,step,dag,context,sched_spec):
+  nodename = '{}_single'.format(step['name'])
   node = {
     'name':nodename,
-    'attributes': {k:v.format(**context) for k,v in step['attributes'].iteritems()},
-    'node_spec':stepspec['definition']['node_spec']
+    'attributes': {k:v.format(**context) for k,v in step['parameters'].iteritems()},
+    'node_spec':sched_spec['nodes']['single']
   }
-
+  
   node = adage.mknode(dag,task = runNode.s(node,context), nodename = nodename)
   step['scheduled_nodes'] = [node]
   

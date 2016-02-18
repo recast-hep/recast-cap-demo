@@ -54,56 +54,53 @@ class RECAST_Rule(object):
     self.schedule(dag)
 
   def schedule(self,dag):
-    sched = self.stepinfo['scheduler']
-    modulename,funcname = sched['name'].split(':')
-    mod = importlib.import_module('recastcap.{}'.format(modulename))
-    func = getattr(mod,funcname)
-    args = sched['args']
-    kwargs = sched['kwargs']
-    func(self.workflow,self.stepinfo,dag,self.global_context,*args,**kwargs)
+    from scheduler_handlers import handlers as sched_handlers
+    sched_spec = self.stepinfo['scheduler']
+    scheduler = sched_handlers[sched_spec['scheduler-type']]
+    scheduler(self.workflow,self.stepinfo,dag,self.global_context,sched_spec)
     
 import traceback
 class RECAST_Result(object):
-  def __init__(self,resultobj,task):
-    self.resultobj = resultobj
-    self.task = task
-    self.result = None
+    def __init__(self,resultobj,task):
+        self.resultobj = resultobj
+        self.task = task
+        self.result = None
     
-  def ready(self):
-    return self.resultobj.ready()
-  def successful(self):
-    return self.resultobj.successful()
-  def get(self):
-    if self.result:
-      return self.result
+    def ready(self):
+        return self.resultobj.ready()
+    def successful(self):
+        return self.resultobj.successful()
+    def get(self):
+        print "GETTING RESULT"
+        if self.result:
+            return self.result
       
-    try:
-        taskresult = self.resultobj.get()
-    except:
-        t,e,tb = sys.exc_info()
-        print "taskresult retrieval failed error: {} {}".format(t,e)
-        print traceback
-        traceback.print_tb(tb)
-        raise
+        try:
+            taskresult = self.resultobj.get()
+        except:
+            t,e,tb = sys.exc_info()
+            print "taskresult retrieval failed error: {} {}".format(t,e)
+            print traceback
+            traceback.print_tb(tb)
+            raise
         
-    result = {
-      'RECAST_metadata':{
-        'outputs':self.publish(self.task.node)
-      },
-      'taskresult':taskresult
-    }
-    self.result = result
-    return self.result
+        print "PUBLISHING"
+        result = {
+            'RECAST_metadata':{
+                'outputs':self.publish(self.task.node)
+            },
+            'taskresult':taskresult
+        }
+        self.result = result
+        return self.result
 
-  def publish(self,node):
-    spec = cap.node(*(node['node_spec'].split('/',1)))
-    publ = spec['publisher']
-    modulename,funcname = publ['name'].split(':')
-    mod = importlib.import_module('recastcap.{}'.format(modulename))  
-    func = getattr(mod,funcname)
-    args = publ['args']
-    kwargs = publ['kwargs']
-    return func(node,*args,**kwargs)
+    def publish(self,node):
+        print 'in publish'
+        print 'publisher is'
+        pubtype =  node['node_spec']['publisher']['publisher-type']
+        from publisher_handlers import handlers as pub_handlers
+        publisher = pub_handlers[pubtype]
+        return publisher(node)
   
 
 class RECAST_Backend(adage.backends.MultiProcBackend):
@@ -118,173 +115,29 @@ class RECAST_Backend(adage.backends.MultiProcBackend):
     return result.get()
 
 def build_command(node):
-  print 'build'
-  attr = node['attributes']
-  spec = cap.node(*(node['node_spec'].split('/',1)))
-
-  cmd  =  spec['definition']['name']
-  
-  filled_args = []
-  for a in spec['definition']['arguments']:
-    filled = None
-    if a['name'] in attr:
-      filled = attr[a['name']]
-    else:
-      filled = a['default']
-    if type(filled)==list:
-      filled_args += filled
-    else:
-      filled_args += [filled]
-
-  filled_opts = []
-  for opt in spec['definition'].get('options',[]):
-    filled_opt = None
-    if opt['description'] in attr:
-      optval = attr[opt['description']]
-      optarg = ' '.join(optval) if type(optval)==list else optval
-      filled_opt = (opt['name'],optarg)
-    else:
-      print 'not found {}'.format(opt)
-    filled_opts += [' '.join(filled_opt)]
-
-
-  filled_flags = []
-  for flag in spec['definition'].get('flags',[]):
-    fille_flag = None
-    if flag['name'] in attr:
-      flagval = attr[flag['name']]
-      if flagval in flag['allowed_values']:
-        filled_flags += [flagval]
-      else:
-        print 'flag {} is not ok'.format(flag['name'])
-
-
-    else:
-      print 'not found flag {}'.format(flag['name'])
-
-
-  command = '{cmd} {args} {flags} {opts}'.format(cmd = cmd, 
-                                                 args = ' '.join(filled_args),
-                                                 flags = ' '.join(filled_flags),
-                                                 opts = ' '.join(filled_opts))
-
+  proc_type =  node['node_spec']['process']['process-type']
+  from process_handlers import handlers as proc_handlers
+  handler = proc_handlers[proc_type]
+  command = handler(node['node_spec']['process'],node['attributes'])
   return command
-
 
 import logging
 
 @RCST
-def runNode(json,global_context):
-  nodelog = '{}/{}.node.log'.format(os.path.abspath(global_context['workdir']),json['name'])
-  log = logging.getLogger('node_logger_{}'.format(json['name']))
-  fh  = logging.FileHandler(nodelog)
-  fh.setLevel(logging.DEBUG)
-  log.addHandler(fh)
-
-  log.info('starting log for node: {}'.format(json['name']))
-
-  command = build_command(json)
-
-  spec = cap.node(*(json['node_spec'].split('/',1)))
-  environment = spec['environment']['definition']
-  
-  container = environment['docker_container']
-  
-  
-  report = '''--------------
-run in docker container: {container}
-with env: {env}
-command: {command}
-resources: {resources}
---------------
-'''.format( container = container,
-            command = command,
-            env = environment['env'] if environment['env'] else 'default env',
-            resources = environment['resources']
-          )
-
-  do_cvmfs = 'CVMFS' in environment['resources']
-  do_grid  = 'GRID' in environment['resources']
-  
-  log.info(report)
-  log.info('dogrid: {} do_cvmfs: {}'.format(do_grid,do_cvmfs))
- 
-  envmod = 'source {} &&'.format(environment['env']) if environment['env'] else ''
-
-  in_docker_cmd = '{envmodifier} {command}'.format(envmodifier = envmod, command = command)
-
-  docker_mod = '-v {}:/workdir'.format(os.path.abspath(global_context['workdir']))
-  if do_cvmfs:
-    if not 'RECAST_CVMFS_LOCATION' in os.environ:
-        docker_mod+=' -v /cvmfs:/cvmfs'
-    else:
-        docker_mod+=' -v {}:/cvmfs'.format(os.environ['RECAST_CVMFS_LOCATION'])
-  if do_grid:
-    if not 'RECAST_AUTH_LOCATION' in os.environ:
-        docker_mod+=' -v /home/recast/recast_auth:/recast_auth'
-    else:
-        docker_mod+=' -v {}:/recast_auth'.format(os.environ['RECAST_AUTH_LOCATION'])
-  
-  in_docker_host = 'echo $(hostname) > /workdir/{nodename}.hostname && {cmd}'.format(nodename = json['name'], cmd = in_docker_cmd)
-
-  fullest_command = 'docker run --rm {docker_mod} {container} sh -c \'{in_dock}\''.format(docker_mod = docker_mod, container = container, in_dock = in_docker_host)
-  if do_cvmfs:
-    fullest_command = 'cvmfs_config probe && {}'.format(fullest_command)
-    # fullest_command = 'eval $(docker-machine env default) && echo cvmfs_config probe && {}'.format(fullest_command)
-
-
-  log.info('global context: \n {}'.format(global_context))
-
-  docker_pull_cmd = 'docker pull {container}'.format(container = container)
-  docker_stop_cmd = 'docker stop $(cat {0}/{1}.hostname)'.format(global_context['workdir'],json['name'])
-
-  log.info('docker pull command: \n  {}'.format(docker_pull_cmd))
-  log.info('docker run  command: \n  {}'.format(fullest_command))
-
-  try:
-    with open('{}/{}.pull.log'.format(global_context['workdir'],json['name']),'w') as logfile:
-      proc = subprocess.Popen(docker_pull_cmd,shell = True, stderr = subprocess.STDOUT, stdout = logfile)
-      log.info('started pull subprocess with pid {}. now wait to finish'.format(proc.pid))
-      time.sleep(0.5)
-      log.info('process children: {}'.format([x for x in psutil.Process(proc.pid).children(recursive = True)]))
-      proc.communicate()
-      log.info('pull subprocess finished. return code: {}'.format(proc.returncode))
-      if proc.returncode:
-        log.error('non-zero return code raising exception')
-        raise subprocess.CalledProcessError(returncode =  proc.returncode, cmd = docker_pull_cmd)
-      log.info('moving on from pull')
-  except RuntimeError as e:
-    log.info('caught RuntimeError')
-    raise e
-  except subprocess.CalledProcessError as exc:
-    log.error('subprocess failed. code: {},  command {}'.format(exc.returncode,exc.cmd))
-    raise RuntimeError('failed docker subprocess in runNode.')
-  except:
-    log.info("Unexpected error: {}".format(sys.exc_info()))
-    raise
-  finally:
-    log.info('finally for pull')
-
-  try:
-    with open('{}/{}.run.log'.format(global_context['workdir'],json['name']),'w') as logfile:
-      proc = subprocess.Popen(fullest_command,shell = True, stderr = subprocess.STDOUT, stdout = logfile)
-      log.info('started run subprocess with pid {}. now wait to finish'.format(proc.pid))
-      time.sleep(0.5)
-      log.info('process children: {}'.format([x for x in psutil.Process(proc.pid).children(recursive = True)]))
-      proc.communicate()
-      log.info('pull subprocess finished. return code: {}'.format(proc.returncode))
-      if proc.returncode:
-        log.error('non-zero return code raising exception')
-      	raise subprocess.CalledProcessError(returncode =  proc.returncode, cmd = fullest_command)
-      log.info('moving on from run')
-
-  except subprocess.CalledProcessError as exc:
-    log.error('subprocess failed. code: {},  command {}'.format(exc.returncode,exc.cmd))
-    raise RuntimeError('failed docker subprocess in runNode.')
-  except:
-    log.error("Unexpected error: {}".format(sys.exc_info()))
-    raise
-  finally:
-    log.info('finally for run')
-
-  log.info('reached return for runNode')
+def runNode(node,global_context):
+    nodelog = '{}/{}.node.log'.format(os.path.abspath(global_context['workdir']),node['name'])
+    log = logging.getLogger('node_logger_{}'.format(node['name']))
+    fh  = logging.FileHandler(nodelog)
+    fh.setLevel(logging.DEBUG)
+    log.addHandler(fh)
+    
+    log.info('starting log for node: {}'.format(node['name']))
+    
+    print node
+    command = build_command(node)
+    
+    environment = node['node_spec']['environment']
+    from environment_handlers import handlers as env_handlers
+    handlercls = env_handlers[environment['environment-type']]
+    handler = handlercls(node['name'],global_context,command,environment, log = log)
+    handler.handle()
