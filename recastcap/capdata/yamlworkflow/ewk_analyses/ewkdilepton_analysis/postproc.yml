@@ -8,6 +8,6 @@ publisher:
 environment:
   environment-type: 'docker-encapsulated'
   envscript: /resources/fitenv.sh
-  image: lukasheinrich/walkthrough_one
+  image: lukasheinrich/dilepton_fit
   resources:
     - CVMFS

@@ -38,7 +38,7 @@ resources: {resources}
                 )
   
         do_cvmfs = 'CVMFS' in environment['resources']
-        do_grid  = 'GRID'  in environment['resources']
+        do_grid  = 'GRIDProxy'  in environment['resources']
   
         log.info(report)
         log.info('dogrid: {} do_cvmfs: {}'.format(do_grid,do_cvmfs))
@@ -49,25 +49,21 @@ resources: {resources}
 
         docker_mod = '-v {}:/workdir'.format(os.path.abspath(workdir))
         if do_cvmfs:
-            pass
-            # if not 'RECAST_CVMFS_LOCATION' in os.environ:
-            #     docker_mod+=' -v /cvmfs:/cvmfs'
-            # else:
-            #     docker_mod+=' -v {}:/cvmfs'.format(os.environ['RECAST_CVMFS_LOCATION'])
+            if not 'RECAST_CVMFS_LOCATION' in os.environ:
+                docker_mod+=' -v /cvmfs:/cvmfs'
+            else:
+                docker_mod+=' -v {}:/cvmfs'.format(os.environ['RECAST_CVMFS_LOCATION'])
         if do_grid:
-            pass
-            # if not 'RECAST_AUTH_LOCATION' in os.environ:
-            #     pass
-            #     docker_mod+=' -v /home/recast/recast_auth:/recast_auth'
-            # else:
-            #     docker_mod+=' -v {}:/recast_auth'.format(os.environ['RECAST_AUTH_LOCATION'])
+            if not 'RECAST_AUTH_LOCATION' in os.environ:
+                docker_mod+=' -v /home/recast/recast_auth:/recast_auth'
+            else:
+                docker_mod+=' -v {}:/recast_auth'.format(os.environ['RECAST_AUTH_LOCATION'])
 
         in_docker_host = 'echo $(hostname) > /workdir/{nodename}.hostname && {cmd}'.format(nodename = self.nametag, cmd = in_docker_cmd)
 
         fullest_command = 'docker run --rm {docker_mod} {container} sh -c \'{in_dock}\''.format(docker_mod = docker_mod, container = container, in_dock = in_docker_host)
         if do_cvmfs:
-            pass
-            # fullest_command = 'cvmfs_config probe && {}'.format(fullest_command)
+            fullest_command = 'cvmfs_config probe && {}'.format(fullest_command)
           # fullest_command = 'eval $(docker-machine env default) && echo cvmfs_config probe && {}'.format(fullest_command)
 
 
