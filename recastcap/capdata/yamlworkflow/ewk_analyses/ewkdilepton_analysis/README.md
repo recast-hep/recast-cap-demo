@@ -1,0 +1,2 @@
+![workflow instance](https://github.com/recast-hep/recast-cap-demo/raw/newjsonschema/recastcap/capdata/yamlworkflow/ewk_analyses/ewkdilepton_analysis/adage_workflow_instance.pdf)
+![workflow template](https://raw.githubusercontent.com/recast-hep/recast-cap-demo/newjsonschema/recastcap/capdata/yamlworkflow/ewk_analyses/ewkdilepton_analysis/workflow.gif)
