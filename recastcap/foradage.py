@@ -71,7 +71,6 @@ class RECAST_Result(object):
     def successful(self):
         return self.resultobj.successful()
     def get(self):
-        print "GETTING RESULT"
         if self.result:
             return self.result
       
@@ -84,7 +83,6 @@ class RECAST_Result(object):
             traceback.print_tb(tb)
             raise
         
-        print "PUBLISHING"
         result = {
             'RECAST_metadata':{
                 'outputs':self.publish(self.task.node)
@@ -95,8 +93,6 @@ class RECAST_Result(object):
         return self.result
 
     def publish(self,node):
-        print 'in publish'
-        print 'publisher is'
         pubtype =  node['node_spec']['publisher']['publisher-type']
         from publisher_handlers import handlers as pub_handlers
         publisher = pub_handlers[pubtype]

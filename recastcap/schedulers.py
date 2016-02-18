@@ -46,33 +46,36 @@ def map_from_dep_output(workflow,step,dag,context,nodename_template,dependency,o
       step['scheduled_nodes'] += [nodeobj]
       index += 1
 
-def reduce_from_dep_output(workflow,step,dag,context,nodename,dependency,outputkey,to_input):
-  stepspec = cap.step(*(step['step_spec'].split('/',1)))
-  dep = [x for x in workflow if x['name'] == dependency][0]
-  step['scheduled_nodes'] = []
+def reduce_from_dep_output(workflow,step,dag,context,sched_spec):
+# def reduce_from_dep_output(workflow,step,dag,context,nodename,dependency,outputkey,to_input):
+    print step.keys()
+    print sched_spec.keys()
+    dependency = [stage for stage in workflow['stages'] if stage['name'] == sched_spec['from_stage']][0]
+    print dependency
 
-  new_inputs = []
-  used_inputs = {}
-  index = 0
-  for x in dep['scheduled_nodes']:
-    used_inputs[x.task.node['name']] = []
-    for i,y in enumerate(x.result_of()['RECAST_metadata']['outputs'][outputkey]):
-      new_inputs += [y]
-      used_inputs[x.task.node['name']] += [(outputkey,i)]
+    new_inputs = []
+    used_inputs = {}
+    for x in dependency['scheduled_nodes']:
+        used_inputs[x.task.node['name']] = []
+        outputkey =  sched_spec['take_outputs']
+        for i,y in enumerate(x.result_of()['RECAST_metadata']['outputs'][outputkey]):
+            new_inputs += [y]
+            used_inputs[x.task.node['name']] += [(outputkey,i)]
 
-  print 'to_input : {} new input: {}'.format(to_input,new_inputs)
+    to_input = sched_spec['to_input']
+    print 'to_input : {} new input: {}'.format(to_input,new_inputs)
+    attributes = {k:str(v).format(**context) for k,v in step['parameters'].iteritems()}
+    attributes[to_input] = new_inputs
+    
+    nodename = '{}_reduce'.format(step['name'])
+    node = {
+        'name':nodename,
+        'attributes':attributes,
+        'node_spec':sched_spec['nodes']['reduce'],
+        'used_inputs':used_inputs
+    }
 
-  attributes = {k:v.format(**context) for k,v in step['attributes'].iteritems()}
-  attributes[to_input] = new_inputs
-
-  node = {
-    'name':nodename,
-    'attributes':attributes,
-    'node_spec':stepspec['definition']['node_spec'],
-    'used_inputs':used_inputs
-  }
-  
-  node = adage.mknode(dag,runNode.s(node,context), nodename = nodename)
-  step['scheduled_nodes'] = [node]
-  for x in dep['scheduled_nodes']:
-    dag.addEdge(x,node)
+    node = adage.mknode(dag,runNode.s(node,context), nodename = nodename)
+    step['scheduled_nodes'] = [node]
+    for x in dependency['scheduled_nodes']:
+        dag.addEdge(x,node)

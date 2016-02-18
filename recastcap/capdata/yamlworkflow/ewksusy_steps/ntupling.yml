@@ -1,6 +1,6 @@
 process:
   process-type: 'string-interpolated-cmd'
-  cmd: './DileptonAnalysis {blinded} {include_truth} {filter} {input_type} -maxsyst {maxsyst} -m {minintup} -f {fileList}'
+  cmd: './DileptonAnalysis {blinded} {include_truth} {filter} {input_type} -maxsyst {maxsyst} -m {minintup} -f {filelist}'
 publisher:
   publisher-type: 'process-attr-pub'
   outputmap:
