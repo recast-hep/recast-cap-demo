@@ -8,7 +8,7 @@ publisher:
 environment:
   environment-type: 'docker-encapsulated'
   envscript: /resources/downloadenv.sh
-  image: lukasheinrich/walkthrough_one
+  image: lukasheinrich/dilepton_download
   resources:
     - CVMFS
     - GRIDProxy
