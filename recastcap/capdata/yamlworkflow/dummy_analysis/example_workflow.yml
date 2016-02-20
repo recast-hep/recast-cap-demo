@@ -1,0 +1,10 @@
+context:
+  myparameter: ~
+stages:
+  - name: dummystage
+    parameters:
+      parameter_one: '{myparameter}'
+    scheduler:
+      scheduler-type: 'singlenode-from-context'
+      nodes:
+        single: {$ref: 'dummy_analysis/simplestep.yml'} 
