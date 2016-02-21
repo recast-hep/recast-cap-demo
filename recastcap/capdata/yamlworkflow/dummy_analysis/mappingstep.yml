@@ -1,0 +1,10 @@
+process:
+  process-type: 'string-interpolated-cmd'
+  cmd: 'echo {inputpar} {parameter_out}'
+publisher:
+  publisher-type: 'process-attr-pub'
+  outputmap:
+    output: parameter_out
+environment:
+  environment-type: 'docker-encapsulated'
+  image: busybox

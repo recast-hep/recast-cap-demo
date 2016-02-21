@@ -16,12 +16,7 @@ class docker_enc_handler(object):
     def handle(self):
         environment = self.spec
         log = self.log
-        
         workdir = self.context['workdir']
-
-        print "handling docker environment"
-        print self.spec
-
         container = self.spec['image']
   
   
@@ -92,7 +87,7 @@ resources: {resources}
           raise e
         except subprocess.CalledProcessError as exc:
           log.error('subprocess failed. code: {},  command {}'.format(exc.returncode,exc.cmd))
-          raise RuntimeError('failed docker subprocess in runNode.')
+          raise RuntimeError('failed docker subprocess in runStep.')
         except:
           log.info("Unexpected error: {}".format(sys.exc_info()))
           raise
@@ -113,12 +108,12 @@ resources: {resources}
                 log.info('moving on from run')
         except subprocess.CalledProcessError as exc:
             log.error('subprocess failed. code: {},  command {}'.format(exc.returncode,exc.cmd))
-            raise RuntimeError('failed docker subprocess in runNode.')
+            raise RuntimeError('failed docker subprocess in runStep.')
         except:
             log.error("Unexpected error: {}".format(sys.exc_info()))
             raise
         finally:
             log.info('finally for run')
-        log.info('reached return for runNode')
+        log.info('reached return for runStep')
 
 handlers['docker-encapsulated'] = docker_enc_handler

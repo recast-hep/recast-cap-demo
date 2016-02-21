@@ -10,8 +10,8 @@ stages:
       outDir: '/workdir/grid_download'
       outList: '/workdir/files.list'
     scheduler:
-      scheduler-type: 'singlenode-from-context'
-      nodes:
+      scheduler-type: 'singlestep-from-context'
+      steps:
         single: {$ref: 'common_steps/downloadnode.yml'} 
   - name: ntupling
     dependencies:
@@ -25,7 +25,7 @@ stages:
       include_truth: '-truth'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
-      nodes:
+      steps:
         reduce: {$ref: 'ewksusy_steps/ntupling.yml'}
       from_stage: download
       take_outputs: output
@@ -41,7 +41,7 @@ stages:
       yield_file: '/workdir/out.yield'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
-      nodes:
+      steps:
         reduce: {$ref: 'ewk_analyses/ewkdilepton_analysis/histfitprep.yml'}
       from_stage: ntupling
       take_outputs: output
@@ -53,7 +53,7 @@ stages:
       fitresults: '/workdir/fit.tgz'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
-      nodes:
+      steps:
         reduce: {$ref: 'ewk_analyses/ewkdilepton_analysis/fit.yml'}
       from_stage: histfitprepare
       take_outputs: output_tree
@@ -67,7 +67,7 @@ stages:
       resultsyaml: '/workdir/results.yaml'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
-      nodes:
+      steps:
         reduce: {$ref: 'ewk_analyses/ewkdilepton_analysis/postproc.yml'}
       from_stage: fit
       take_outputs: output

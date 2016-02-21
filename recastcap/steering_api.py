@@ -17,7 +17,7 @@ import yaml
 def run_cap_analysis(workdir,analysis,context_yaml):
     log = logging.getLogger(__name__)
     logging.basicConfig(level = logging.INFO)
-    log.info('hello!')
+    log.info('hello there huh?!')
 
     backend = foradage.RECAST_Backend(2)
 
@@ -32,28 +32,28 @@ def run_cap_analysis(workdir,analysis,context_yaml):
             global_context[k] = '/workdir/inputs/{}'.format(v)
 
 
-    steps_graph = nx.DiGraph()
+    stages_graph = nx.DiGraph()
     workflow = cap.workflow(analysis)
 
-    for step in workflow['stages']:
-      steps_graph.add_node(step['name'],step)
-      for x in step['dependencies']:
-        steps_graph.add_edge(x,step['name'])
+    for stage in workflow['stages']:
+      stages_graph.add_node(stage['name'],stage)
+      for x in stage['dependencies']:
+        stages_graph.add_edge(x,stage['name'])
 
     rules = {}
-    for stepname in nx.topological_sort(steps_graph):
-        stepinfo = steps_graph.node[stepname]
-        rule = foradage.RECAST_Rule(stepinfo,workflow,rules,global_context)
-        rules[stepname] = rule
+    for stagename in nx.topological_sort(stages_graph):
+        stageinfo = stages_graph.node[stagename]
+        rule = foradage.RECAST_Rule(stageinfo,workflow,rules,global_context)
+        rules[stagename] = rule
 
     adage.rundag(g,rules.values(), track = True, backend = backend, trackevery = 30, workdir = workdir)
 
     provgraph = nx.DiGraph()
     for x in nx.topological_sort(g):
       attr = g.node[x].copy()
-      attr.update(color = 'red',label = g.getNode(x).name)
+      attr.update(color = 'red',label = g.getNode(x).name, shape = 'box')
       provgraph.add_node(x,attr)
-      nodeinfo =  g.getNode(x).task.node
+      nodeinfo =  g.getNode(x).task.step
 
       if 'used_inputs' in nodeinfo:
         for k,inputs_from_node in nodeinfo['used_inputs'].iteritems():
@@ -67,22 +67,22 @@ def run_cap_analysis(workdir,analysis,context_yaml):
 
       for k,v in g.getNode(x).result_of()['RECAST_metadata']['outputs'].iteritems():
         for i,y in enumerate(v):
-          name = 'output_{}_{}_{}'.format(g.getNode(x).task.node['name'],k,i)
-          provgraph.add_node(name,{'shape':'box','label':'{}_{}'.format(k,i),'color':'blue'})
+          name = 'output_{}_{}_{}'.format(g.getNode(x).task.step['name'],k,i)
+          provgraph.add_node(name,{'label':'{}_{}'.format(k,i),'color':'blue'})
           provgraph.add_edge(x,name)
 
     write_dot(provgraph,'{}/adage_workflow_instance.dot'.format(workdir))
     subprocess.call(['dot','-Tpdf','{}/adage_workflow_instance.dot'.format(workdir)], stdout = open('{}/adage_workflow_instance.pdf'.format(workdir),'w'))
 
 
-    steps_graph_simple = nx.DiGraph()
-    for step in workflow['stages']:
-      steps_graph_simple.add_node(step['name'])
-      for x in step['dependencies']:
-        steps_graph_simple.add_edge(x,step['name'])
+    stages_graph_simple = nx.DiGraph()
+    for stage in workflow['stages']:
+      stages_graph_simple.add_node(stage['name'])
+      for x in stage['dependencies']:
+        stages_graph_simple.add_edge(x,stage['name'])
 
-    write_dot(steps_graph_simple,'{}/adage_steps.dot'.format(workdir))
-    subprocess.call(['dot','-Tpdf','{}/adage_steps.dot'.format(workdir)], stdout = open('{}/steps.pdf'.format(workdir),'w'))
+    write_dot(stages_graph_simple,'{}/adage_stages.dot'.format(workdir))
+    subprocess.call(['dot','-Tpdf','{}/adage_stages.dot'.format(workdir)], stdout = open('{}/stages.pdf'.format(workdir),'w'))
   
 
 if __name__ == '__main__':

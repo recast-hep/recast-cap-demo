@@ -12,7 +12,8 @@
         "publisher": {
             "type": "object",
             "oneOf":[
-              {"$ref": "fromattr-pub-schema.json#"}
+              {"$ref": "fromattr-pub-schema.json#"},
+              {"$ref": "fromyaml-pub-schema.json#"}
             ]
         },
         "environment": {

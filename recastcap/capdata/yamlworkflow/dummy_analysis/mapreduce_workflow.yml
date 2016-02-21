@@ -1,0 +1,35 @@
+context:
+  myparameter: ~
+stages:
+  - name: data_acquisition
+    parameters:
+      parameter_one: '{myparameter}'
+    scheduler:
+      scheduler-type: 'singlestep-from-context'
+      steps:
+        single: {$ref: 'dummy_analysis/dataacquisition.yml'} 
+  - name: mapstage
+    dependencies:
+      - data_acquisition
+    parameters:
+      parameter_out: 'theoutput_{index}'
+    scheduler:
+      scheduler-type: 'map-from-dep-output'
+      steps:
+        map: {$ref: 'dummy_analysis/mappingstep.yml'}
+      from_stage: data_acquisition
+      take_outputs: acq_out
+      to_input: inputpar
+      stepname: 'mapnode_{index}'
+  - name: reduce
+    dependencies:
+      - mapstage
+    parameters:
+      out: mergedfile.root
+    scheduler:
+      scheduler-type: 'reduce-from-dep-output'
+      steps:
+        reduce: {$ref: 'dummy_analysis/reducestep.yml'}
+      from_stage: mapstage
+      take_outputs: output
+      to_input: in
