@@ -21,6 +21,19 @@ stages:
       take_outputs: acq_out
       to_input: inputpar
       stepname: 'mapnode_{index}'
+  - name: mapstage2
+    dependencies:
+      - mapstage
+    parameters:
+      parameter_out: 'anotheroutput_{index}'
+    scheduler:
+      scheduler-type: 'map-from-dep-output'
+      steps:
+        map: {$ref: 'dummy_analysis/mappingstep.yml'}
+      from_stage: mapstage
+      take_outputs: output
+      to_input: inputpar
+      stepname: 'newmapnode_{index}'
   - name: reduce
     dependencies:
       - mapstage
@@ -31,5 +44,17 @@ stages:
       steps:
         reduce: {$ref: 'dummy_analysis/reducestep.yml'}
       from_stage: mapstage
+      take_outputs: output
+      to_input: in
+  - name: reduce2
+    dependencies:
+      - mapstage2
+    parameters:
+      out: mergedfile2.root
+    scheduler:
+      scheduler-type: 'reduce-from-dep-output'
+      steps:
+        reduce: {$ref: 'dummy_analysis/reducestep.yml'}
+      from_stage: mapstage2
       take_outputs: output
       to_input: in
