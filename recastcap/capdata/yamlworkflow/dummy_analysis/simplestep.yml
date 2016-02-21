@@ -1,6 +1,6 @@
 process:
   process-type: 'string-interpolated-cmd'
-  cmd: 'echo {parameter_one}'
+  cmd: 'echo $RANDOM|sed "s|[0-9]|&.|" | xargs sleep && echo {parameter_one}'
 publisher:
   publisher-type: 'process-attr-pub'
   outputmap:

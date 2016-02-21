@@ -45,8 +45,8 @@ def run_cap_analysis(workdir,analysis,context_yaml):
         stageinfo = stages_graph.node[stagename]
         rule = foradage.RECAST_Rule(stageinfo,workflow,rules,global_context)
         rules[stagename] = rule
-
-    adage.rundag(g,rules.values(), track = True, backend = backend, trackevery = 30, workdir = workdir)
+    
+    adage.rundag(g,rules.values(), track = True, backend = backend, trackevery = 5, workdir = workdir)
 
     provgraph = nx.DiGraph()
     for x in nx.topological_sort(g):
