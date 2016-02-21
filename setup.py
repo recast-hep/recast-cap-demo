@@ -14,7 +14,7 @@ setup(
     'click',
     'psutil',
     'requests',
-    'pyyaml'
+    'pyyaml',
     'jsonref',
     'jsonschema'
   ],
