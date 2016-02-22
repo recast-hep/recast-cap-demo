@@ -12,3 +12,5 @@ install: "pip install ."
 script:
   - docker pull busybox 
   - docker run -it busybox echo 'hello'
+  - recastworkflow-capsteer workdir pheno_workflows/madgraph_delphes.yml tests/phenoctx.yml
+  - ls -lrt workdir
