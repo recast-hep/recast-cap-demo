@@ -16,6 +16,9 @@ install:
 script:
   - docker pull busybox 
   - docker run -it busybox echo 'hello'
-  - mkdir workdir
-  - recastworkflow-capsteer workdir pheno_workflows/madgraph_delphes.yml tests/phenoctx.yml
-  - ls -lrt workdir
+  - mkdir workdir_madgraph_delphes
+  - recastworkflow-capsteer workdir_madgraph_delphes pheno_workflows/madgraph_delphes.yml tests/phenoctx.yml
+  - ls -lrt workdir_madgraph_delphes
+  - mkdir workdir_dummy_complex
+  - recastworkflow-capsteer workdir_dummy_complex dummy_analysis/complex_mapreduce.yml dummycontext.yml
+  - ls -lrt workdir_dummy_complex

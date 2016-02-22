@@ -2,13 +2,11 @@ import json
 import pkg_resources
 import requests
 import jsoncap
-def localcap_workflow(workflowpath):
-    toplevel = pkg_resources.resource_filename('recastcap','capdata/yamlworkflow')
-    schemas  = pkg_resources.resource_filename('recastcap','capdata/justschemas')
-    return jsoncap.validate_workflow(workflowpath,toplevel,schemas)
     
 def workflow(name):
-    ok, workflow =  localcap_workflow(name)
+    toplevel = pkg_resources.resource_filename('recastcap','capdata/yamlworkflow')
+    schemas  = pkg_resources.resource_filename('recastcap','capdata/justschemas')
+    ok, workflow =  jsoncap.validate_workflow(name,toplevel,schemas)
     if ok:
         return workflow
     else:
