@@ -1,2 +1,2 @@
-recursive-include recastdilepton/capdata *
+recursive-include recastcap/capdata *
 
