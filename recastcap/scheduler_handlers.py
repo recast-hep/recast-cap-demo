@@ -50,7 +50,7 @@ def reduce_from_dep_output(workflow,stage,dag,context,sched_spec):
     for x in [s for d in dependencies for s in d['scheduled_steps']]:
         dag.addEdge(x,step)
 
-handlers['reduce-from-dep-output']  = schedulers.reduce_from_dep_output
+handlers['reduce-from-dep-output']  = reduce_from_dep_output
 
 def map_from_dep_output(workflow,stage,dag,context,sched_spec):
     dependencies = [s for s in workflow['stages'] if s['name'] in sched_spec['from_stages']]
@@ -83,7 +83,7 @@ def map_from_dep_output(workflow,stage,dag,context,sched_spec):
         stage['scheduled_steps'] += [stepobj]
         index += 1
 
-handlers['map-from-dep-output']     = schedulers.map_from_dep_output
+handlers['map-from-dep-output']     = map_from_dep_output
 
 
 def map_step_from_context(workflow,stage,dag,context,sched_spec):
@@ -113,4 +113,4 @@ def map_step_from_context(workflow,stage,dag,context,sched_spec):
         stepobj = adage.mknode(dag,task = runStep.s(step,context), nodename = step['name'])
         stage['scheduled_steps'] += [stepobj]
 
-handlers['map-from-context']        = schedulers.map_step_from_context
+handlers['map-from-context']        = map_step_from_context
