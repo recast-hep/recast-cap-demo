@@ -10,6 +10,8 @@ python:
 install:
   - "pip install git+git://github.com/lukasheinrich/adage.git@master"
   - "pip install ."
+  - apt-get install -y graphviz
+  - apt-get install -y imagemagick
 
 script:
   - docker pull busybox 
