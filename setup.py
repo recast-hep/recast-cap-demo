@@ -14,7 +14,9 @@ setup(
     'click',
     'psutil',
     'requests',
-    'pyyaml'
+    'pyyaml',
+    'jsonref',
+    'jsonschema'
   ],
   entry_points = {
       'console_scripts': ['recastworkflow-capsteer=recastcap.steering:main'],
