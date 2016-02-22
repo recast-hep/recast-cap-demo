@@ -1,8 +1,6 @@
-import json
 import pkg_resources
-import requests
 import jsoncap
-    
+
 def workflow(name):
     toplevel = pkg_resources.resource_filename('recastcap','capdata/yamlworkflow')
     schemas  = pkg_resources.resource_filename('recastcap','capdata/justschemas')
