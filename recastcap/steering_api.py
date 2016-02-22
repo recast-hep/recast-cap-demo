@@ -86,9 +86,3 @@ def run_cap_analysis(workdir,analysis,context_yaml):
     write_prov_graph(workdir,g)
     write_stage_graph(workdir,workflow)
     log.info('finished CAP workflow {}'.format(analysis))
-
-  
-
-if __name__ == '__main__':
-  main()
-
