@@ -66,23 +66,23 @@ def prepare_adage(workflow,global_context):
     g = adage.mk_dag()
     return g,rules
 
-def run_cap_analysis(workdir,analysis,context_yaml):
+def run_cap_analysis(workdir_local,workdir_global,analysis,context_yaml):
     log.info('running CAP workflow {}'.format(analysis))
 
     backend = foradage.RECAST_Backend(2)
 
     global_context = yaml.load(open(context_yaml))
-    global_context.update(workdir = workdir)
+    global_context.update(global_workdir = workdir_global, workdir = workdir_local)
 
     for k,v in global_context.iteritems():
-        candpath = '{}/inputs/{}'.format(workdir,v)
+        candpath = '{}/inputs/{}'.format(workdir_local,v)
         if os.path.exists(candpath):
             global_context[k] = '/workdir/inputs/{}'.format(v)
 
     workflow = cap.workflow(analysis)
     g, rules = prepare_adage(workflow,global_context)
-    adage.rundag(g,rules.values(), track = True, backend = backend, trackevery = 5, workdir = workdir)
+    adage.rundag(g,rules.values(), track = True, backend = backend, trackevery = 5, workdir = workdir_local)
 
-    write_prov_graph(workdir,g)
-    write_stage_graph(workdir,workflow)
+    write_prov_graph(workdir_local,g)
+    write_stage_graph(workdir_local,workflow)
     log.info('finished CAP workflow {}'.format(analysis))
