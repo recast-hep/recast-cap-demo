@@ -42,7 +42,7 @@ resources: {resources}
 
         in_docker_cmd = '{envmodifier} {command}'.format(envmodifier = envmod, command = self.command)
 
-        docker_mod = '-v {}:/workdir'.format(self.context['global_workdir'])
+        docker_mod = '-v {}:/workdir'.format(os.path.abspath(self.context['global_workdir']))
         if do_cvmfs:
             if not 'RECAST_CVMFS_LOCATION' in os.environ:
                 docker_mod+=' -v /cvmfs:/cvmfs'
