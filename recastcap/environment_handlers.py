@@ -1,4 +1,3 @@
-handlers = {}
 import logging
 import os
 import subprocess
@@ -6,6 +5,13 @@ import sys
 import time
 import psutil
 
+handlers = {}
+def environment(name):
+    def wrap(func):
+        handlers[name] = func
+    return wrap
+
+@environment('docker-encapsulated')
 class docker_enc_handler(object):
     def __init__(self,nametag,context,cmd,environment_spec,log):
         self.nametag  = nametag
@@ -20,7 +26,8 @@ class docker_enc_handler(object):
         container = self.spec['image']
   
   
-        report = '''\n--------------
+        report = '''\n\
+--------------
 run in docker container: {container}
 with env: {env}
 command: {command}
@@ -115,5 +122,3 @@ resources: {resources}
         finally:
             log.info('finally for run')
         log.info('reached return for runStep')
-
-handlers['docker-encapsulated'] = docker_enc_handler

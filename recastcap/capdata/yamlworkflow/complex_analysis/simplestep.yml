@@ -7,4 +7,4 @@ publisher:
     step_output: parameter_one
 environment:
   environment-type: 'docker-encapsulated'
-  image: busybox
+  image: lukasheinrich/workflow-dummy

@@ -2,7 +2,6 @@ context:
   dataset_data: ~
   dataset_mcback_one: ~
   dataset_mcback_two: ~
-  dataset_signal_template: ~
   signal_par_one: ~
   signal_par_two: ~
   data_driven_cut: ~
@@ -20,7 +19,7 @@ stages:
     parameters:
       inputtype: 'mc'
       input: '{dataset_mcback_one}'
-      output: '{dataset_mcback_one}.ntup.root'
+      output: '/workdir/{dataset_mcback_one}.ntup.root'
     scheduler:
       scheduler-type: 'singlestep-from-context'
       steps:
@@ -29,17 +28,16 @@ stages:
     parameters:
       inputtype: 'mc'
       input: '{dataset_mcback_one}'
-      output: '{dataset_mcback_one}.ntup.root'
+      output: '/workdir/{dataset_mcback_one}.ntup.root'
     scheduler:
       scheduler-type: 'singlestep-from-context'
       steps:
         single: {$ref: 'complex_analysis/ntupling.yml'}
   - name: acquire_signal
     parameters:
-      template: '{dataset_signal_template}'
       par_one: '{signal_par_one}'
       par_two: '{signal_par_two}'
-      output: 'signal_{signal_par_one}_{signal_par_two}.input.root'
+      output: '/workdir/signal.input.root'
     scheduler:
       scheduler-type: 'singlestep-from-context'
       steps:
@@ -49,7 +47,7 @@ stages:
       - acquire_signal
     parameters:
       inputtype: 'mc'
-      output: 'signal.ntup.root'
+      output: '/workdir/signal.ntup.root'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
       steps:
@@ -62,7 +60,7 @@ stages:
     dependencies:
       - mcsignal
     parameters:
-      output: 'signal.histos.root'
+      output: '/workdir/signal.histos.root'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
       steps:
@@ -75,7 +73,7 @@ stages:
     dependencies:
       - mcback1
     parameters:
-      output: 'back1.histos.root'
+      output: '/workdir/back1.histos.root'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
       steps:
@@ -88,7 +86,7 @@ stages:
     dependencies:
       - mcback2
     parameters:
-      output: 'back2.histos.root'
+      output: '/workdir/back2.histos.root'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
       steps:
@@ -101,7 +99,7 @@ stages:
     dependencies:
       - preparedata
     parameters:
-      output: 'data.histos.root'
+      output: '/workdir/data.histos.root'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
       steps:
@@ -114,8 +112,8 @@ stages:
     dependencies:
       - preparedata
     parameters:
-      output_loose: 'data.histos.root:/hist_loose'
-      output_tight: 'data.histos.root:/tight_hist'
+      output_loose: '/workdir/data.histos.root:/hist_loose'
+      output_tight: '/workdir/data.histos.root:/tight_hist'
       tight_cut: '{data_driven_cut}'
     scheduler:
       scheduler-type: 'reduce-from-dep-output'
@@ -129,7 +127,7 @@ stages:
     dependencies:
       - data_driven_back_hists
     parameters:
-      estimate_output: 'estimate.hist.root'
+      estimate_output: '/workdir/estimate.hist.root'
     scheduler:
       scheduler-type: 'zip-from-dep-output'
       steps:
@@ -151,8 +149,8 @@ stages:
       - hist_mc2
       - hist_mcsignal
     parameters:
-      fitresults: fitresults.yaml
-      workspace: fit.workspace.root
+      fitresults: /workdir/fitresults.yaml
+      workspace: /workdir/fit.workspace.root
     scheduler:
       scheduler-type: 'zip-from-dep-output'
       steps:
@@ -180,7 +178,7 @@ stages:
       - hist_mc2
       - hist_mcsignal
     parameters:
-      plotdir: plots
+      plotdir: /workdir/plots
     scheduler:
       scheduler-type: 'zip-from-dep-output'
       steps:

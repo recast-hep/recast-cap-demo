@@ -1,10 +1,10 @@
 process:
   process-type: 'string-interpolated-cmd'
-  cmd: 'echo {input} {output}'
+  cmd: './makehistos_mc.sh {input} {output}'
 publisher:
   publisher-type: 'process-attr-pub'
   outputmap:
     mchistos: output
 environment:
   environment-type: 'docker-encapsulated'
-  image: busybox
+  image: lukasheinrich/workflow-dummy

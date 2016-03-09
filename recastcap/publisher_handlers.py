@@ -1,24 +1,25 @@
 import yaml
 
 handlers = {}
+def publisher(name):
+    def wrap(func):
+        handlers[name] = func
+    return wrap
 
+@publisher('process-attr-pub')
 def process_attr_pub_handler(step,context):
     outputs = {}
     for k,v in step['step_spec']['publisher']['outputmap'].iteritems():
       outputs[k] = [step['attributes'][v]]
     return outputs
     
-handlers['process-attr-pub'] = process_attr_pub_handler
-
+@publisher('fromyaml-pub')
 def fromyaml_pub_handler(step,context):
     yamlfile =  step['step_spec']['publisher']['yamlfile']
     yamlfile =  yamlfile.replace('/workdir',context['workdir'])
     pubdata = yaml.load(open(yamlfile))
     return pubdata
     
-handlers['fromyaml-pub'] = fromyaml_pub_handler
-
+@publisher('dummy-pub')
 def dummy_pub_handler(step,context):
     return  step['step_spec']['publisher']['publish']
-    
-handlers['dummy-pub'] = dummy_pub_handler

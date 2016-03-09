@@ -10,6 +10,11 @@ log = logging.getLogger(__name__)
 
 handlers = {}
 
+def scheduler(name):
+    def wrap(func):
+        handlers[name] = func
+    return wrap
+
 
 ### A scheduler does the following things:
 ###   - attached new nodes to the DAG
@@ -18,8 +23,9 @@ handlers = {}
 ###     - the step attributes are determined using the scheduler spec and context
 ###     - a list of used inputs (in the form of [stepname,outputkey,index])
 
+@scheduler('singlestep-from-context')
 def single_step_from_context(workflow,stage,dag,context,sched_spec):
-    log.info('scheduling via zip_from_dep_output')
+    log.info('scheduling via single_step_from_context')
     stepname = '{}_single'.format(stage['name'])
     step = {
         'name':stepname,
@@ -30,8 +36,7 @@ def single_step_from_context(workflow,stage,dag,context,sched_spec):
     step = adage.mknode(dag,task = runStep.s(step,context), nodename = stepname)
     stage['scheduled_steps'] = [step]
 
-handlers['singlestep-from-context'] = single_step_from_context
-
+@scheduler('zip-from-dep-output')
 def zip_from_dep_output(workflow,stage,dag,context,sched_spec):
     log.info('scheduling via zip_from_dep_output')
 
@@ -86,9 +91,7 @@ def zip_from_dep_output(workflow,stage,dag,context,sched_spec):
     for x in used_nodes:
         dag.addEdge(x,step)
     
-
-handlers['zip-from-dep-output'] = zip_from_dep_output
-
+@scheduler('reduce-from-dep-output')
 def reduce_from_dep_output(workflow,stage,dag,context,sched_spec):
     log.info('scheduling via reduce_from_dep_output')
     dependencies = [s for s in workflow['stages'] if s['name'] in sched_spec['from_stages']]
@@ -131,8 +134,7 @@ def reduce_from_dep_output(workflow,stage,dag,context,sched_spec):
     for x in [s for d in dependencies for s in d['scheduled_steps']]:
         dag.addEdge(x,step)
 
-handlers['reduce-from-dep-output']  = reduce_from_dep_output
-
+@scheduler('map-from-dep-output')
 def map_from_dep_output(workflow,stage,dag,context,sched_spec):
     log.info('scheduling via map_from_dep_output')
     dependencies = [s for s in workflow['stages'] if s['name'] in sched_spec['from_stages']]
@@ -170,9 +172,8 @@ def map_from_dep_output(workflow,stage,dag,context,sched_spec):
         stage['scheduled_steps'] += [stepobj]
         index += 1
 
-handlers['map-from-dep-output']     = map_from_dep_output
 
-
+@scheduler('map-from-context')
 def map_step_from_context(workflow,stage,dag,context,sched_spec):
     log.info('map_step_from_context')
     mappar = sched_spec['map_parameter']
@@ -200,5 +201,3 @@ def map_step_from_context(workflow,stage,dag,context,sched_spec):
         }
         stepobj = adage.mknode(dag,task = runStep.s(step,context), nodename = step['name'])
         stage['scheduled_steps'] += [stepobj]
-
-handlers['map-from-context']        = map_step_from_context

@@ -1,10 +1,10 @@
 process:
   process-type: 'string-interpolated-cmd'
-  cmd: 'echo {input} {output}'
+  cmd: './makehistos_data.sh {input} {output}'
 publisher:
   publisher-type: 'process-attr-pub'
   outputmap:
     datahistos: output
 environment:
   environment-type: 'docker-encapsulated'
-  image: busybox
+  image: lukasheinrich/workflow-dummy
