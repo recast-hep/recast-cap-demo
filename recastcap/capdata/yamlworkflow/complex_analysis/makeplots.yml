@@ -1,0 +1,10 @@
+process:
+  process-type: 'string-interpolated-cmd'
+  cmd: 'echo {data} {signal} {back1} {back2} {back3} {plotdir}'
+publisher:
+  publisher-type: 'process-attr-pub'
+  outputmap:
+    plots: plotdir
+environment:
+  environment-type: 'docker-encapsulated'
+  image: busybox

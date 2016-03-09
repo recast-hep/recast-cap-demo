@@ -1,0 +1,11 @@
+process:
+  process-type: 'string-interpolated-cmd'
+  cmd: 'echo {tight_cut} {input} {output_loose} {output_tight}'
+publisher:
+  publisher-type: 'process-attr-pub'
+  outputmap:
+    loose: output_loose
+    tight: output_tight
+environment:
+  environment-type: 'docker-encapsulated'
+  image: busybox

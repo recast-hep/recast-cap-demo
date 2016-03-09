@@ -4,34 +4,115 @@ import adage
 import yaml
 import foradage
 from foradage import runStep
+import re
+import logging
+log = logging.getLogger(__name__)
 
 handlers = {}
 
+
+### A scheduler does the following things:
+###   - attached new nodes to the DAG
+###   - for each added step
+###     - the step is given a name
+###     - the step attributes are determined using the scheduler spec and context
+###     - a list of used inputs (in the form of [stepname,outputkey,index])
+
 def single_step_from_context(workflow,stage,dag,context,sched_spec):
-  stepname = '{}_single'.format(stage['name'])
-  step = {
-    'name':stepname,
-    'attributes': {k:v.format(**context) for k,v in stage['parameters'].iteritems()},
-    'step_spec':sched_spec['steps']['single']
-  }
-  
-  step = adage.mknode(dag,task = runStep.s(step,context), nodename = stepname)
-  stage['scheduled_steps'] = [step]
+    log.info('scheduling via zip_from_dep_output')
+    stepname = '{}_single'.format(stage['name'])
+    step = {
+        'name':stepname,
+        'attributes': {k:v.format(**context) for k,v in stage['parameters'].iteritems()},
+        'step_spec':sched_spec['steps']['single']
+    }
+    
+    step = adage.mknode(dag,task = runStep.s(step,context), nodename = stepname)
+    stage['scheduled_steps'] = [step]
 
 handlers['singlestep-from-context'] = single_step_from_context
 
+def zip_from_dep_output(workflow,stage,dag,context,sched_spec):
+    log.info('scheduling via zip_from_dep_output')
+
+    used_inputs = {}
+    used_nodes = []
+    zipped_maps = []
+
+    ### we loop each zip pattern
+    for zipconfig in sched_spec['zip']:
+        new_inputs = []
+
+        ### for each dependent stage we loop through its steps
+        dependencies = [s for s in workflow['stages'] if s['name'] in zipconfig['from_stages']]
+        for x in [step for d in dependencies for step in d['scheduled_steps']]:
+            rcmeta = x.result_of()['RECAST_metadata']
+            if not x.task.step['name'] in used_inputs:
+                used_inputs[x.task.step['name']] = []
+
+            outputkey_regex = re.compile(zipconfig['outputs'])
+            matching_outputkeys = [k for k in rcmeta['outputs'].keys() if outputkey_regex.match(k)]
+
+            ## for each step we loop through matching outputs
+            for outputkey in matching_outputkeys:
+                try:
+                    for i,y in enumerate(rcmeta['outputs'][outputkey]):
+                        new_inputs += [y]
+                        used_inputs[x.task.step['name']] += [(outputkey,i)]
+                        used_nodes += [x]
+                except KeyError:
+                    log.exception('could not fine output {} in metadata {}'.format(outputkey,rcmeta))
+
+        zipwith = zipconfig['zip_with']
+        newmap = dict(zip(zipwith,new_inputs))
+        log.info('zipped map {}'.format(newmap))
+        zipped_maps += [newmap]
+            
+
+    attributes = {k:str(v).format(**context) for k,v in stage['parameters'].iteritems()}
+    for zipped in zipped_maps:
+        attributes.update(**zipped)
+    
+    stepname = '{}_zipped'.format(stage['name'])
+    step = {
+        'name':stepname,
+        'attributes':attributes,
+        'step_spec':sched_spec['steps']['single'],
+        'used_inputs':used_inputs
+    }
+
+    step = adage.mknode(dag,runStep.s(step,context), nodename = stepname)
+    stage['scheduled_steps'] = [step]
+    for x in used_nodes:
+        dag.addEdge(x,step)
+    
+
+handlers['zip-from-dep-output'] = zip_from_dep_output
 
 def reduce_from_dep_output(workflow,stage,dag,context,sched_spec):
+    log.info('scheduling via reduce_from_dep_output')
     dependencies = [s for s in workflow['stages'] if s['name'] in sched_spec['from_stages']]
 
     new_inputs = []
     used_inputs = {}
+
     for x in [step for d in dependencies for step in d['scheduled_steps']]:
         used_inputs[x.task.step['name']] = []
-        outputkey =  sched_spec['take_outputs']
-        for i,y in enumerate(x.result_of()['RECAST_metadata']['outputs'][outputkey]):
-            new_inputs += [y]
-            used_inputs[x.task.step['name']] += [(outputkey,i)]
+
+        outputkey_regex = re.compile(sched_spec['take_outputs'])
+
+        rcmeta = x.result_of()['RECAST_metadata']
+        log.info('reduce_from_dep_output: matching {} to regex: {}'.format(rcmeta['outputs'].keys(),sched_spec['take_outputs']))
+        matching_outputkeys = [k for k in rcmeta['outputs'].keys() if outputkey_regex.match(k)]
+        log.info('reduce_from_dep_output: matching output keys {}'.format(matching_outputkeys))
+        for outputkey in matching_outputkeys:
+            try:
+                rcmeta = x.result_of()['RECAST_metadata']
+                for i,y in enumerate(rcmeta['outputs'][outputkey]):
+                    new_inputs += [y]
+                    used_inputs[x.task.step['name']] += [(outputkey,i)]
+            except KeyError:
+                log.exception('could not fine output {} in metadata {}'.format(outputkey,rcmeta))
 
     to_input = sched_spec['to_input']
     attributes = {k:str(v).format(**context) for k,v in stage['parameters'].iteritems()}
@@ -53,6 +134,7 @@ def reduce_from_dep_output(workflow,stage,dag,context,sched_spec):
 handlers['reduce-from-dep-output']  = reduce_from_dep_output
 
 def map_from_dep_output(workflow,stage,dag,context,sched_spec):
+    log.info('scheduling via map_from_dep_output')
     dependencies = [s for s in workflow['stages'] if s['name'] in sched_spec['from_stages']]
     
     outputkey           = sched_spec['take_outputs']
@@ -60,9 +142,14 @@ def map_from_dep_output(workflow,stage,dag,context,sched_spec):
     stepname_template   = sched_spec['stepname']
     stage['scheduled_steps'] = []
     index = 0
+
+    outputkey_regex = re.compile(outputkey)
+    
     for x in [step for d in dependencies for step in d['scheduled_steps']]:
       rcmeta = x.result_of()['RECAST_metadata']
-      for this_index,y in enumerate(rcmeta['outputs'][outputkey]):
+      matching_outputs = [v for k,v in rcmeta['outputs'].iteritems() if outputkey_regex.match(k)]
+      
+      for this_index,y in enumerate(out for thisout in matching_outputs for out in thisout):
         withindex = context.copy()
         withindex.update(index = index)
 
@@ -87,6 +174,7 @@ handlers['map-from-dep-output']     = map_from_dep_output
 
 
 def map_step_from_context(workflow,stage,dag,context,sched_spec):
+    log.info('map_step_from_context')
     mappar = sched_spec['map_parameter']
     to_input = sched_spec['to_input']
     stepname_template   = sched_spec['stepname']

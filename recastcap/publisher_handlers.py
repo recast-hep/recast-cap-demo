@@ -17,3 +17,8 @@ def fromyaml_pub_handler(step,context):
     return pubdata
     
 handlers['fromyaml-pub'] = fromyaml_pub_handler
+
+def dummy_pub_handler(step,context):
+    return  step['step_spec']['publisher']['publish']
+    
+handlers['dummy-pub'] = dummy_pub_handler

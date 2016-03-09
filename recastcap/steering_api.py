@@ -44,7 +44,7 @@ def write_prov_graph(workdir,adagegraph):
       for k,v in adagegraph.getNode(x).result_of()['RECAST_metadata']['outputs'].iteritems():
         for i,y in enumerate(v):
           name = 'output_{}_{}_{}'.format(adagegraph.getNode(x).task.step['name'],k,i)
-          provgraph.add_node(name,{'label':'{}_{}'.format(k,i),'color':'blue'})
+          provgraph.add_node(name,{'label':'{}_{}: {}'.format(k,i,y),'color':'blue'})
           provgraph.add_edge(x,name)
 
     write_dot(provgraph,'{}/adage_workflow_instance.dot'.format(workdir))

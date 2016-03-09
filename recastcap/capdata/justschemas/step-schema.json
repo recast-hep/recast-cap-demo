@@ -13,7 +13,8 @@
             "type": "object",
             "oneOf":[
               {"$ref": "fromattr-pub-schema.json#"},
-              {"$ref": "fromyaml-pub-schema.json#"}
+              {"$ref": "fromyaml-pub-schema.json#"},
+              {"$ref": "dummy-pub-schema.json#"}
             ]
         },
         "environment": {

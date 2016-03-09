@@ -32,5 +32,5 @@ stages:
         reduce: {$ref: 'lhcb_talk/reducestep.yml'}
       from_stages:
         - mapstage
-      take_outputs: mapoutput
+      take_outputs: map.*
       to_input: in

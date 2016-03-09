@@ -11,6 +11,7 @@ def extend_with_default(validator_class):
     validate_properties = validator_class.VALIDATORS["properties"]
 
     def set_defaults(validator, properties, instance, schema):
+        print 'instance {}'.format(instance)
         for property, subschema in properties.iteritems():
             if "default" in subschema:
                 instance.setdefault(property, subschema["default"])
@@ -58,5 +59,8 @@ def validator(schemadir):
 
 def validate_workflow(workflowyml, toplevel, schemadir):
     workflow = workflow_loader(workflowyml,toplevel)
-    validator(schemadir).validate(workflow)
+    try:
+        validator(schemadir).validate(workflow)
+    except jsonschema.RefResolutionError as e:
+        raise RuntimeError('could not resolve reference {}'.format(e))
     return True,workflow
