@@ -16,7 +16,7 @@ install:
   - sudo apt-get install -y imagemagick
 
 script:
-  - mkdir workdir_madgraph_delphes
+  - mkdir workdir
   - "echo 'events: 100' > ctx.yml"
   - yadage-run -t from-github workdir pheno_workflows/madgraph_delphes.yml ctx.yml
   - ls -lrt workdir
