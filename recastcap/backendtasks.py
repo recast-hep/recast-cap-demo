@@ -30,7 +30,7 @@ def recast(ctx):
     
     while proc.poll() is None:
         s = proc.stdout.readline()
-        print s.strip()
+        # print s.strip()
         try:
             splitup = s.strip().split(':',1)
             if len(splitup)==2:
