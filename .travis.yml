@@ -11,7 +11,7 @@ install:
   - "pip install git+git://github.com/lukasheinrich/adage.git@master"
   - "pip install git+git://github.com/lukasheinrich/yadage.git@master"
   - "pip install git+git://github.com/lukasheinrich/packtivity.git@master"
-  - "pip install git+git://github.com/recast-hep/recast-backend.git@master"
+  - "pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links"
   - "pip install ."
   - sudo apt-get install -y graphviz
   - sudo apt-get install -y imagemagick
