@@ -20,3 +20,5 @@ script:
   - "echo 'events: 100' > ctx.yml"
   - yadage-run -t from-github workdir pheno_workflows/madgraph_delphes.yml ctx.yml
   - ls -lrt workdir
+  - rm -rf workdir
+  - ./runtest.sh
