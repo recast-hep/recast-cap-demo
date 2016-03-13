@@ -15,5 +15,6 @@ install:
 
 script:
   - mkdir workdir_madgraph_delphes
-  - recastworkflow-capsteer workdir_madgraph_delphes pheno_workflows/madgraph_delphes.yml tests/phenoctx.yml
-  - ls -lrt workdir_madgraph_delphes
+  - echo 'events: 100' > ctx.yml
+  - yadage-run -t from-github workdir pheno_workflows/madgraph_delphes.yml ctx.yml
+  - ls -lrt workdir

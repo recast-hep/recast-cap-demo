@@ -19,7 +19,6 @@ setup(
     'jsonschema'
   ],
   entry_points = {
-      'console_scripts': ['recastworkflow-capsteer=recastcap.steering:main'],
   },
   dependency_links = [
   ]
