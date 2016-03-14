@@ -24,7 +24,7 @@ def recast(ctx):
         context  = yadagectx
     )
      
-    log.info('running cmd: {}'.format(cmd))
+    log.info('running cmd: %s',cmd)
     
     subprocess.call(shlex.split('find {}'.format(workdir)))
     proc = subprocess.Popen(shlex.split(cmd), stderr = subprocess.STDOUT, stdout = subprocess.PIPE)
