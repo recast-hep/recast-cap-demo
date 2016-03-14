@@ -8,17 +8,17 @@ python:
   - '2.7'
 
 install:
-  - sudo "pip install git+git://github.com/lukasheinrich/adage.git@master"
-  - sudo "pip install git+git://github.com/lukasheinrich/yadage.git@master"
-  - sudo "pip install git+git://github.com/lukasheinrich/packtivity.git@master"
-  - sudo "pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links"
-  - sudo "pip install ."
+  - "sudo pip install git+git://github.com/lukasheinrich/adage.git@master"
+  - "sudo pip install git+git://github.com/lukasheinrich/yadage.git@master"
+  - "sudo pip install git+git://github.com/lukasheinrich/packtivity.git@master"
+  - "sudo pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links"
+  - "sudo pip install ."
   - sudo apt-get install -y graphviz
   - sudo apt-get install -y imagemagick
 
 script:
   - sudo mkdir workdir
-  - sudo "echo 'events: 100' > ctx.yml"
+  - "sudo echo 'events: 100' > ctx.yml"
   - sudo yadage-run -t from-github workdir pheno_workflows/madgraph_delphes.yml ctx.yml
   - sudo ls -lrt workdir
   - sudo rm -rf workdir
