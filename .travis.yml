@@ -10,7 +10,7 @@ python:
 install:
   - "sudo pip install --upgrade 'requests[security]'"
   - "sudo pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links"
-  - "sudo pip install ."
+  - "sudo pip install . --process-dependency-links"
   - sudo apt-get install -y graphviz
   - sudo apt-get install -y imagemagick
 
