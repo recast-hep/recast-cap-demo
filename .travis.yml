@@ -24,3 +24,4 @@ script:
   - rm -rf workdir
   - ./runtest.sh
   - ./testrunbackend.py complex_analysis/fullworkflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root,nonexistent
+  - ls -lrt
