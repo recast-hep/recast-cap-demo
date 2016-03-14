@@ -8,19 +8,19 @@ python:
   - '2.7'
 
 install:
-  - "pip install git+git://github.com/lukasheinrich/adage.git@master"
-  - "pip install git+git://github.com/lukasheinrich/yadage.git@master"
-  - "pip install git+git://github.com/lukasheinrich/packtivity.git@master"
-  - "pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links"
-  - "pip install ."
+  - sudo "pip install git+git://github.com/lukasheinrich/adage.git@master"
+  - sudo "pip install git+git://github.com/lukasheinrich/yadage.git@master"
+  - sudo "pip install git+git://github.com/lukasheinrich/packtivity.git@master"
+  - sudo "pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links"
+  - sudo "pip install ."
   - sudo apt-get install -y graphviz
   - sudo apt-get install -y imagemagick
 
 script:
-  - mkdir workdir
-  - "echo 'events: 100' > ctx.yml"
-  - yadage-run -t from-github workdir pheno_workflows/madgraph_delphes.yml ctx.yml
-  - ls -lrt workdir
-  - rm -rf workdir
-  - ./runtest.sh
+  - sudo mkdir workdir
+  - sudo "echo 'events: 100' > ctx.yml"
+  - sudo yadage-run -t from-github workdir pheno_workflows/madgraph_delphes.yml ctx.yml
+  - sudo ls -lrt workdir
+  - sudo rm -rf workdir
+  - sudo ./runtest.sh
   - sudo ./testrunbackend.py complex_analysis/fullworkflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root,nonexistent
