@@ -35,10 +35,11 @@ def recast(ctx):
         try:
             splitup = s.strip().split(':',1)
             if len(splitup)==2:
-                for line in splitup[1].splitlines():
-                    if 'adage' in line:
-                        pass#log.log(getattr(logging,splitup[0]),line)
-            # log.log(getattr(logging,splitup[0]),line)
+                level,rest = splitup
+                thelevel = getattr(logging,level)
+                for line in rest.splitlines():
+                    if 'adage' in line or thelevel>logging.INFO:
+                        log.log(thelevel,rest)
         except AttributeError:
             pass
         time.sleep(0.01)
