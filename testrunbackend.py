@@ -10,13 +10,14 @@ import recastcap.backendtasks
 def main(analysis,url,results):
     ctx = {
         'jobguid': 'dummyjobid',
-        'analysis':analysis,
+        'workflow':analysis,
         'inputURL':url,
         'entry_point':'recastcap.backendtasks:recast',
         'backend':'testbackend',
         'shipout_base':'shipout_dummy',
         'resultlist':results.split(',')
     }
+
     
     recastbackend.backendtasks.run_analysis_standalone(
         recastbackend.backendtasks.setupFromURL,

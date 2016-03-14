@@ -18,25 +18,26 @@ def recast(ctx):
     if not os.path.exists(yadagectx):
         log.error('context file: %s does not exist',yadagectx)
   
-    cmd = 'yadage-run -t from-github {workdir} {analysis} {context}'.format(
+    cmd = 'yadage-run -t from-github {workdir} {workflow} {context}'.format(
         workdir = workdir,
-        analysis = ctx['analysis'],
+        workflow = ctx['workflow'],
         context  = yadagectx
     )
      
     log.info('running cmd: {}'.format(cmd))
     
+    subprocess.call(shlex.split('find {}'.format(workdir)))
     proc = subprocess.Popen(shlex.split(cmd), stderr = subprocess.STDOUT, stdout = subprocess.PIPE)
     
     while proc.poll() is None:
         s = proc.stdout.readline()
-        # print s.strip()
+        log.info(s.strip())
         try:
             splitup = s.strip().split(':',1)
             if len(splitup)==2:
                 for line in splitup[1].splitlines():
                     if 'adage' in line:
-                        log.log(getattr(logging,splitup[0]),line)
+                        pass#log.log(getattr(logging,splitup[0]),line)
             # log.log(getattr(logging,splitup[0]),line)
         except AttributeError:
             pass
