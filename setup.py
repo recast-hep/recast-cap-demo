@@ -23,7 +23,7 @@ setup(
   entry_points = {
   },
   dependency_links = [
-      'https://github.com/lukasheinrich/yadage/tarball/master#egg=yadage-0.0.1'
+      'https://github.com/lukasheinrich/yadage/tarball/master#egg=yadage-0.0.1',
       'https://github.com/lukasheinrich/adage/tarball/master#egg=adage-0.0.1'
   ]
 )
