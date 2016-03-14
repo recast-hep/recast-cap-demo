@@ -10,20 +10,19 @@ setup(
   packages = find_packages(),
   include_package_data = True,
   install_requires = [
-    'adage',
     'click',
     'psutil',
     'requests',
     'pyyaml',
     'jsonref',
-    'adage',
     'yadage',
+    'adage>0.2.0',
     'jsonschema'
   ],
   entry_points = {
   },
   dependency_links = [
       'https://github.com/lukasheinrich/yadage/tarball/master#egg=yadage-0.0.1',
-      'https://github.com/lukasheinrich/adage/tarball/master#egg=adage-0.0.1'
+      'https://github.com/lukasheinrich/adage/tarball/master#egg=adage-0.3.0'
   ]
 )
