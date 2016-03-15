@@ -12,7 +12,7 @@ setup(
   install_requires = [
     'click',
     'psutil',
-    'requests',
+    'requests[security]>2.9',
     'pyyaml',
     'jsonref',
     'yadage',

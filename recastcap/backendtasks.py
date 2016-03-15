@@ -18,6 +18,11 @@ def recast(ctx):
     if not os.path.exists(yadagectx):
         log.error('context file: %s does not exist',yadagectx)
   
+  
+    if 'RECAST_CAP_IN_DOCKER_WORKDIR_VOL' in os.environ:
+        os.environ['PACKTIVITY_WORKDIR_LOCATION']='{}/{}'.format(os.environ['RECAST_CAP_IN_DOCKER_WORKDIR_VOL'],workdir)
+        log.info('plugin is running in Docker. set packtivity workdir as %s',os.environ['PACKTIVITY_WORKDIR_LOCATION'])
+        
     cmd = 'yadage-run -t from-github {workdir} {workflow} {context}'.format(
         workdir = workdir,
         workflow = ctx['workflow'],
