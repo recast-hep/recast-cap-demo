@@ -1,0 +1,22 @@
+version: '2'
+services:
+  plugin:
+    image: lukasheinrich/recast-cap-demo
+    # command: bash -c 'ssh-keyscan -t rsa shiptarget >> ~/.ssh/known_hosts ;cd /workdirsdata; celery worker -A recastbackend.fromenvapp:app -l debug -Q recast_cap_queue --logfile celery.log'
+    command: bash
+    stdin_open: true
+    tty: true
+    environment:
+      - C_FORCE_ROOT=yes
+      - CELERY_REDIS_HOST=lheinric-newcc
+      - CELERY_REDIS_PORT=6379
+      - CELERY_REDIS_DB=0
+      - RECAST_SHIP_USER=root
+      - RECAST_SHIP_HOST=lheinric-newcc
+      - RECAST_SHIP_PORT=22
+      - RECAST_IN_DOCKER_WORKDIRS_VOL=$RECAST_IN_DOCKER_WORKDIRS_VOL
+      - PACKTIVITY_WITHIN_DOCKER=true
+    volumes:
+       - /var/run/docker.sock:/var/run/docker.sock
+       - $HOME/.ssh:/root/.ssh
+       - $RECAST_IN_DOCKER_WORKDIRS_VOL:/workdirsdata

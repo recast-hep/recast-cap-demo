@@ -2,7 +2,7 @@ version: '2'
 services:
   plugin:
     image: lukasheinrich/recast-cap-demo
-    command: bash -c 'cd /workdirdata && python /recast_cap/testrunbackend.py complex_analysis/fullworkflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root'
+    command: bash -c 'cd /workdirdata && python /recast_cap/testrunbackend.py complex_analysis/fullworkflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root && find /tmp/recast_quarantine'
     #stdin_open: true
     #tty: true
     environment:
