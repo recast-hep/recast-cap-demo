@@ -7,7 +7,8 @@ import recastcap.backendtasks
 @click.argument('analysis')
 @click.argument('url')
 @click.argument('results')
-def main(analysis,url,results):
+@click.option('--cleanup/--no-cleanup',default = True)
+def main(analysis,url,results,cleanup):
     ctx = {
         'jobguid': 'dummyjobid',
         'workflow':analysis,
@@ -22,7 +23,7 @@ def main(analysis,url,results):
     recastbackend.backendtasks.run_analysis_standalone(
         recastbackend.backendtasks.setupFromURL,
         recastbackend.backendtasks.dummy_onsuccess,
-        recastbackend.backendtasks.cleanup,
+        recastbackend.backendtasks.cleanup if cleanup else lambda ctx: None,
         ctx,
         redislogging = False
     )

@@ -20,4 +20,4 @@ script:
   # - sudo ls -lrt workdir
   # - sudo rm -rf workdir
   # - sudo ./runtest.sh
-  # - sudo ./testrunbackend.py complex_analysis/fullworkflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root,nonexistent
+  - "sudo RECAST_CAP_TOPLVL='from-github/testing/busybox-flow' ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root,nonexistent,world.txt"
