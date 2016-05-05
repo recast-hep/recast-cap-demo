@@ -64,7 +64,6 @@ def recast(ctx):
             except AttributeError:
                 pass
         else:
-            print 'here',proc.poll()
             if proc.poll() is not None:
                 break
         time.sleep(0.01)
