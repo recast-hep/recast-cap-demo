@@ -25,4 +25,4 @@ script:
   - sudo rm -rf workdirs
   - "sudo RECAST_CAP_TOPLVL='from-github/testing/busybox-flow' ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root,nonexistent,world.txt"
   - find /tmp/recast_quarantine
-  
+  - ./testdocker.sh myvol2  
