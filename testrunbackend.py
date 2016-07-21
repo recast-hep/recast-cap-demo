@@ -7,11 +7,13 @@ import recastcap.backendtasks
 @click.argument('analysis')
 @click.argument('url')
 @click.argument('results')
+@click.argument('toplevel')
 @click.option('--cleanup/--no-cleanup',default = True)
-def main(analysis,url,results,cleanup):
+def main(analysis,url,results,toplevel,cleanup):
     ctx = {
         'jobguid': 'dummyjobid',
         'workflow':analysis,
+        'toplevel':toplevel,
         'inputURL':url,
         'entry_point':'recastcap.backendtasks:recast',
         'backend':'testbackend',
@@ -19,7 +21,6 @@ def main(analysis,url,results,cleanup):
         'resultlist':results.split(',')
     }
 
-    
     recastbackend.backendtasks.run_analysis_standalone(
         recastbackend.backendtasks.setupFromURL,
         recastbackend.backendtasks.dummy_onsuccess,
@@ -27,6 +28,6 @@ def main(analysis,url,results,cleanup):
         ctx,
         redislogging = False
     )
-    
+
 if __name__ == '__main__':
     main()

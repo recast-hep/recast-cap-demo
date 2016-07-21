@@ -5,8 +5,9 @@ import recastcap.backendtasks
 @click.command()
 @click.argument('analysis')
 @click.argument('jobguid')
-def main(analysis,jobguid):
-    recastcap.backendtasks.recast({'workflow':analysis,'jobguid':jobguid})
-    
+@click.argument('toplevel')
+def main(analysis,jobguid,toplevel):
+    recastcap.backendtasks.recast({'workflow':analysis,'jobguid':jobguid,'toplevel':toplevel})
+
 if __name__ == '__main__':
     main()

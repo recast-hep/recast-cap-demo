@@ -16,7 +16,7 @@ setup(
     'pyyaml',
     'jsonref',
     'yadage',
-    'adage>0.2.0',
+    'adage',
     'jsonschema'
   ],
   entry_points = {
