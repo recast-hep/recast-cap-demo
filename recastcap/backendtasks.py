@@ -28,8 +28,9 @@ def recast(ctx):
         yadage_env['PACKTIVITY_WORKDIR_LOCATION'] = '{}:{}'.format(os.path.abspath(workdir),workdirpath)
         log.info('plugin is running in Docker. set packtivity workdir as %s',yadage_env['PACKTIVITY_WORKDIR_LOCATION'])
 
-    cmd = 'yadage-run -t {toplevel} {workdir} {workflow} {context}'.format(
+    cmd = 'yadage-run -b {backend} -t {toplevel} {workdir} {workflow} {context}'.format(
         workdir = workdir,
+        backend = os.environ.get('RECAST_YADAGEBACKEND','multiproc:2'),
         workflow = ctx['workflow'],
         context  = yadagectx,
         toplevel = ctx.get('toplevel','from-github/pseudocap')
