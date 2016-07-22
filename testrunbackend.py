@@ -7,7 +7,7 @@ import recastcap.backendtasks
 @click.argument('analysis')
 @click.argument('url')
 @click.argument('results')
-@click.argument('toplevel')
+@click.opiton('-t','--toplevel', default = 'from-github/pseudocap')
 @click.option('--cleanup/--no-cleanup',default = True)
 def main(analysis,url,results,toplevel,cleanup):
     ctx = {
