@@ -7,7 +7,7 @@ import recastcap.backendtasks
 @click.argument('analysis')
 @click.argument('url')
 @click.argument('results')
-@click.opiton('-t','--toplevel', default = 'from-github/pseudocap')
+@click.option('-t','--toplevel', default = 'from-github/pseudocap')
 @click.option('--cleanup/--no-cleanup',default = True)
 def main(analysis,url,results,toplevel,cleanup):
     ctx = {
@@ -18,7 +18,10 @@ def main(analysis,url,results,toplevel,cleanup):
         'entry_point':'recastcap.backendtasks:recast',
         'backend':'testbackend',
         'shipout_base':'shipout_dummy',
-        'resultlist':results.split(',')
+        'resultlist':results.split(','),
+        # 'fixed_pars':{
+        #   'some_preset_par': 'dummy'
+        # }
     }
 
     recastbackend.backendtasks.run_analysis_standalone(

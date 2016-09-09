@@ -3,6 +3,7 @@ import subprocess
 import time
 import os
 import shlex
+import yaml
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('RECAST')
@@ -10,6 +11,13 @@ log = logging.getLogger('RECAST')
 def recast(ctx):
     log.info('running CAP analysis')
     workdir = 'workdirs/{}'.format(ctx['jobguid'])
+
+    fixed_pars = ctx.get('fixed_pars',{})
+    presetfilename = '{}/inputs/preset.yaml'.format(workdir)
+    with open(presetfilename,'w') as presetfile:
+        yaml.dump(fixed_pars,presetfile, default_flow_style = False)
+
+    log.info('preset parameters are {}'.format(fixed_pars))
     yadagectx = '{}/inputs/input.yaml'.format(workdir)
 
     log.info('running recast workflow on context {}'.format(ctx))
@@ -22,17 +30,21 @@ def recast(ctx):
 
     yadage_env = env = os.environ.copy()
 
+
+
+
     if 'RECAST_IN_DOCKER_WORKDIRS_VOL' in os.environ:
         #publish absolute path of this workdir for use by plugins
         workdirpath = '/'.join([os.environ['RECAST_IN_DOCKER_WORKDIRS_VOL'],workdir])
         yadage_env['PACKTIVITY_WORKDIR_LOCATION'] = '{}:{}'.format(os.path.abspath(workdir),workdirpath)
         log.info('plugin is running in Docker. set packtivity workdir as %s',yadage_env['PACKTIVITY_WORKDIR_LOCATION'])
 
-    cmd = 'yadage-run -b {backend} -t {toplevel} {workdir} {workflow} {context}'.format(
+    cmd = 'yadage-run -b {backend} -t {toplevel} {workdir} {workflow} {initpar} {presetpar}'.format(
         workdir = workdir,
         backend = os.environ.get('RECAST_YADAGEBACKEND','multiproc:2'),
         workflow = ctx['workflow'],
-        context  = yadagectx,
+        initpar  = yadagectx,
+        presetpar = presetfilename,
         toplevel = ctx.get('toplevel','from-github/pseudocap')
     )
 
@@ -52,7 +64,6 @@ def recast(ctx):
     filelogger.propagate = False
 
     while True:
-
         s = proc.stdout.readline().strip()
         if s:
             filelogger.debug(s)

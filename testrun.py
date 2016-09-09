@@ -7,7 +7,11 @@ import recastcap.backendtasks
 @click.argument('jobguid')
 @click.option('-t','--toplevel', default = 'from-github/pseudocap')
 def main(analysis,jobguid,toplevel):
-    recastcap.backendtasks.recast({'workflow':analysis,'jobguid':jobguid,'toplevel':toplevel})
+    recastcap.backendtasks.recast({
+        'workflow':analysis,
+        'jobguid':jobguid,
+        'toplevel':toplevel
+    })
 
 if __name__ == '__main__':
     main()
