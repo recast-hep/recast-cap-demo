@@ -30,21 +30,19 @@ def recast(ctx):
 
     yadage_env = env = os.environ.copy()
 
-
-
-
     if 'RECAST_IN_DOCKER_WORKDIRS_VOL' in os.environ:
         #publish absolute path of this workdir for use by plugins
         workdirpath = '/'.join([os.environ['RECAST_IN_DOCKER_WORKDIRS_VOL'],workdir])
         yadage_env['PACKTIVITY_WORKDIR_LOCATION'] = '{}:{}'.format(os.path.abspath(workdir),workdirpath)
         log.info('plugin is running in Docker. set packtivity workdir as %s',yadage_env['PACKTIVITY_WORKDIR_LOCATION'])
 
-    cmd = 'yadage-run -b {backend} -t {toplevel} {workdir} {workflow} {initpar} {presetpar}'.format(
+    cmd = 'yadage-run -u {updateinterval} -b {backend} -t {toplevel} {workdir} {workflow} {initpar} {presetpar}'.format(
         workdir = workdir,
         backend = os.environ.get('RECAST_YADAGEBACKEND','multiproc:2'),
         workflow = ctx['workflow'],
         initpar  = yadagectx,
         presetpar = presetfilename,
+        updateinterval = 30,
         toplevel = ctx.get('toplevel','from-github/pseudocap')
     )
 
