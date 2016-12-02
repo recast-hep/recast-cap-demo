@@ -14,6 +14,7 @@ install:
 
 script:
   - echo 'hello world'
+  - python -c 'import click;print click.__file__'
 #  - sudo mkdir workdir
 #  - "sudo echo 'events: 100' > ctx.yml"
 #  - sudo yadage-run -t from-github/testing/busybox-flow workdir rootflow.yml
