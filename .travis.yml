@@ -9,8 +9,8 @@ python:
 
 install:
   - sudo apt-get install -y graphviz imagemagick
-  - sudo pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links
-  - sudo pip install . --process-dependency-links
+  - pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links
+  - pip install . --process-dependency-links
 
 script:
   - echo 'hello world'
