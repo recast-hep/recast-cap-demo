@@ -13,9 +13,7 @@ install:
   - pip install . --process-dependency-links
 
 script:
-  - echo 'hello world'
-  - python -c 'import click;print click.__file__'
-  - echo 'events: 100' > ctx.yml
+  - "echo 'events: 100' > ctx.yml"
   - yadage-run -t from-github/testing/busybox-flow workdir rootflow.yml
   - docker build -t lukasheinrich/recast-cap-demo .
   - ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root,nonexistent,world.txt --no-cleanup -t from-github/busybox-flow
