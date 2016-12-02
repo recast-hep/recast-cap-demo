@@ -17,7 +17,7 @@ def recast(ctx):
     with open(presetfilename,'w') as presetfile:
         yaml.dump(fixed_pars,presetfile, default_flow_style = False)
 
-    log.info('preset parameters are {}'.format(fixed_pars))
+    log.info('preset parameters are %s',fixed_pars)
     yadagectx = '{}/inputs/input.yaml'.format(workdir)
 
     log.info('running recast workflow on context {}'.format(ctx))
