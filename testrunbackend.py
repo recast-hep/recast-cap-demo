@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-import recastbackend.backendtasks
+import recastcelery.backendtasks
 import recastcap.backendtasks
 
 @click.command()
@@ -12,22 +12,21 @@ import recastcap.backendtasks
 def main(analysis,url,results,toplevel,cleanup):
     ctx = {
         'jobguid': 'dummyjobid',
+        'shipout_base':'shipout_dummy',
+        'inputURL':url,
+
+        'backend':'testbackend',
+        'entry_point':'recastcap.backendtasks:recast',
+        'resultlist':results.split(','),
+
         'workflow':analysis,
         'toplevel':toplevel,
-        'inputURL':url,
-        'entry_point':'recastcap.backendtasks:recast',
-        'backend':'testbackend',
-        'shipout_base':'shipout_dummy',
-        'resultlist':results.split(','),
-        # 'fixed_pars':{
-        #   'some_preset_par': 'dummy'
-        # }
     }
 
-    recastbackend.backendtasks.run_analysis_standalone(
-        recastbackend.backendtasks.setupFromURL,
-        recastbackend.backendtasks.dummy_onsuccess,
-        recastbackend.backendtasks.cleanup if cleanup else lambda ctx: None,
+    recastcelery.backendtasks.run_analysis_standalone(
+        recastcelery.backendtasks.setupFromURL,
+        recastcelery.backendtasks.dummy_onsuccess,
+        recastcelery.backendtasks.cleanup if cleanup else lambda ctx: None,
         ctx,
         redislogging = False
     )

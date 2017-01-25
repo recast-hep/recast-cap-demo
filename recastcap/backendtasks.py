@@ -3,52 +3,34 @@ import subprocess
 import time
 import os
 import shlex
-import yaml
+import simple_workflow
+import combined_workflow
+import re
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('RECAST')
 
 def recast(ctx):
     log.info('running CAP analysis')
+
     workdir = 'workdirs/{}'.format(ctx['jobguid'])
 
-    fixed_pars = ctx.get('fixed_pars',{})
-    presetfilename = '{}/inputs/preset.yaml'.format(workdir)
-    with open(presetfilename,'w') as presetfile:
-        yaml.dump(fixed_pars,presetfile, default_flow_style = False)
+    if 'combinedspec' in ctx:
+        cmd = combined_workflow.workflow_command(ctx,workdir)
+    else:
+        cmd = simple_workflow.workflow_command(ctx,workdir)
 
-    log.info('preset parameters are %s',fixed_pars)
-    yadagectx = '{}/inputs/input.yaml'.format(workdir)
+    log.info('running cmd: %s',cmd)
 
-    log.info('running recast workflow on context {}'.format(ctx))
-
-    if not os.path.exists(workdir):
-        log.error('workdirectory: %s does not exist',workdir)
-
-    if not os.path.exists(yadagectx):
-        log.error('context file: %s does not exist',yadagectx)
+    subprocess.call(shlex.split('find {}'.format(workdir)))
 
     yadage_env = env = os.environ.copy()
-
     if 'RECAST_IN_DOCKER_WORKDIRS_VOL' in os.environ:
         #publish absolute path of this workdir for use by plugins
         workdirpath = '/'.join([os.environ['RECAST_IN_DOCKER_WORKDIRS_VOL'],workdir])
         yadage_env['PACKTIVITY_WORKDIR_LOCATION'] = '{}:{}'.format(os.path.abspath(workdir),workdirpath)
         log.info('plugin is running in Docker. set packtivity workdir as %s',yadage_env['PACKTIVITY_WORKDIR_LOCATION'])
 
-    cmd = 'yadage-run -u {updateinterval} -b {backend} -t {toplevel} {workdir} {workflow} {initpar} {presetpar}'.format(
-        workdir = workdir,
-        backend = os.environ.get('RECAST_YADAGEBACKEND','multiproc:2'),
-        workflow = ctx['workflow'],
-        initpar  = yadagectx,
-        presetpar = presetfilename,
-        updateinterval = 30,
-        toplevel = ctx.get('toplevel','from-github/pseudocap')
-    )
-
-    log.info('running cmd: %s',cmd)
-
-    subprocess.call(shlex.split('find {}'.format(workdir)))
     proc = subprocess.Popen(shlex.split(cmd),
                             env = yadage_env,
                             stderr = subprocess.STDOUT,
@@ -66,13 +48,12 @@ def recast(ctx):
         if s:
             filelogger.debug(s)
             try:
-                splitup = s.split(':',1)
-                if len(splitup)==2:
-                    level,rest = splitup
+                match = re.match('.* - adage - ([A-Za-z]*) - (.*)', s)
+                if match and len(match.groups())==2:
+                    level,rest = match.groups()
                     thelevel = getattr(logging,level)
                     for line in rest.splitlines():
-                        if 'adage' in line or thelevel>logging.INFO:
-                            log.log(thelevel,rest)
+                        log.log(thelevel,rest)
             except AttributeError:
                 pass
         else:
