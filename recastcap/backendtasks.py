@@ -25,6 +25,9 @@ def recast(ctx):
     subprocess.call(shlex.split('find {}'.format(workdir)))
 
     yadage_env = env = os.environ.copy()
+    yadage_env['RECAST_JOBGUID'] = ctx['jobguid']
+    yadage_env['YADAGE_CUSTOM_TRACKER'] = 'recastcap.tracker:RECASTTracker'
+
     if 'RECAST_IN_DOCKER_WORKDIRS_VOL' in os.environ:
         #publish absolute path of this workdir for use by plugins
         workdirpath = '/'.join([os.environ['RECAST_IN_DOCKER_WORKDIRS_VOL'],workdir])
