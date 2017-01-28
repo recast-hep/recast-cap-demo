@@ -1,2 +1,2 @@
-recursive-include recastcap/capdata *
+recursive-include recastcap/resources *
 

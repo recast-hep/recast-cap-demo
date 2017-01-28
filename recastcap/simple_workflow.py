@@ -28,7 +28,7 @@ def workflow_command(ctx,workdir):
         workflow = ctx['workflow'],
         initpar  = yadagectx,
         presetpar = presetfilename,
-        updateinterval = 30,
+        updateinterval = 10,
         toplevel = ctx.get('toplevel','from-github/pseudocap')
     )
     return cmd

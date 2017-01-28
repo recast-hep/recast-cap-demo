@@ -37,34 +37,11 @@ def recast(ctx):
     proc = subprocess.Popen(shlex.split(cmd),
                             env = yadage_env,
                             stderr = subprocess.STDOUT,
-                            stdout = subprocess.PIPE)
+                            stdout = open('{}/fullyadage.log'.format(workdir),'w'))
 
-    filelogger = logging.getLogger('yadage_output')
-    filelogger.setLevel(logging.DEBUG)
-    fh = logging.FileHandler('{}/fullyadage.log'.format(workdir))
-    fh.setLevel(logging.DEBUG)
-    filelogger.addHandler(fh)
-    filelogger.propagate = False
-
-    while True:
-        s = proc.stdout.readline().strip()
-        if s:
-            filelogger.debug(s)
-            try:
-                match = re.match('.* - adage - ([A-Za-z]*) - (.*)', s)
-                if match and len(match.groups())==2:
-                    level,rest = match.groups()
-                    thelevel = getattr(logging,level)
-                    for line in rest.splitlines():
-                        log.log(thelevel,rest)
-            except AttributeError:
-                pass
-        else:
-            if proc.poll() is not None:
-                break
-        time.sleep(0.01)
-
-    log.info('workflow process terminated task')
+    proc.communicate()
+    log.info('workflow process terminated')
     if proc.returncode:
         log.error('workflow failed, raising error')
         raise RuntimeError('failed workflow process return code {}'.format(proc.returncode))
+    log.info('workflow succeeded, recast plugin end.')

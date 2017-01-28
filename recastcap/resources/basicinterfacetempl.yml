@@ -1,0 +1,12 @@
+stages:
+  - name: upstream
+    scheduler:
+      scheduler_type: singlestep-stage
+      parameters: null
+      workflow: null
+  - name: downstream
+    dependencies: ['upstream']
+    scheduler:
+      scheduler_type: singlestep-stage
+      parameters: null
+      workflow: null
