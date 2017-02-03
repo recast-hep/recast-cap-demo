@@ -5,7 +5,7 @@ from yadage.helpers import WithJsonRefEncoder
 
 class RECASTTracker(object):
     def __init__(self):
-	   self.jobguid = os.environ['RECAST_JOBGUID']
+       self.jobguid = os.environ['RECAST_JOBGUID']
 
     def initialize(self,adageobj):
         self.track(adageobj)
