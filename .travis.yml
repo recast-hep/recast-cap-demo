@@ -18,10 +18,10 @@ script:
 - RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip
   fit.workspace.root,nonexistent,world.txt -t from-github/testing/busybox-flow
 - find /tmp/recast_quarantine
-- docker build -t lukasheinrich/recast-cap-demo .
+- docker build -t recast/yadage-worker:githead .
 - echo $DOCKERLOGIN
 - docker login -u $DOCKERLOGIN -p $DOCKERPW
-- docker push lukasheinrich/recast-cap-demo:githead
+- docker push recast/yadage-worker:githead
 env:
   global:
   - secure: 1MGMlWOlfdQ6GNJAvh0H0DyQXrIP7B1ZDzLVzBrCNEIE+qiYC2QBLs+8zBAoNTA8Mra2l3RJPUYhPnAPD67isuI74bj0WpsFzyxn1Dzy9/yct/mMmpOUyDYGkFxxM/nMagTaznjlx+2gA7sk9UK75a36aRncsB96P5zIkgs+C7HOh+XvXeuhdth05J8K04WUKvW0N4V3ahQfM33NlAABMy3QA3RcQBURuwW1AxKbYnTiw/3piSqaQZsqwGRZ/kKU7xqIAnhLduaNXxp74DfXBdqzTnJkVRGY3FHRIW/S/MCVV+uQMeD0qByru6BInIb2FxWYrUjK5/bFc/U01Af4mB5MVlxz44mw9ZRy0SGgHhJS7ebckvZ+q+GV1Od46y7GGyJqhJyU3UA6HBYuRDZmnXHbaJd5HlMYlGT9OGovFj0FFVVwpV8WpppefcWQ3HwrgNi9Q3nI+YyJOhAASR1sui8S+vslAYE7s83NOhQkB6xiOJGu7j6EZU7RmBhkafHW1hKZQWZQn3/8LWSUPt1kaI3qGI1ACkZ6sIkV6wcaT23h4mgYHZjOsCI/z6KiJqTm0Dyv+jK/n2Oc5m6xEStv5K1Z23RsTSpgQklvdsxyKWpZo2polnh75JCu4PUh57peTnqMnd/qVTsUMBkMriUNV5lRXUo6SImj0Xj09IhTLCY=
