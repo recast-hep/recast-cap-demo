@@ -1,6 +1,7 @@
 import logging
 import subprocess
 import os
+import yaml
 import shlex
 import simple_workflow
 import combined_workflow
@@ -24,7 +25,8 @@ def recast(ctx):
 
     yadage_env = os.environ.copy()
     yadage_env['RECAST_JOBGUID'] = ctx['jobguid']
-    yadage_env['YADAGE_CUSTOM_TRACKER'] = 'recastcap.tracker:RECASTTracker'
+    if yaml.load(os.environ.get('RECAST_PLUGIN_TRACK','true')):
+        yadage_env['YADAGE_CUSTOM_TRACKER'] = 'recastcap.tracker:RECASTTracker'
 
     if 'RECAST_IN_DOCKER_WORKDIRS_VOL' in os.environ:
         #publish absolute path of this workdir for use by plugins
