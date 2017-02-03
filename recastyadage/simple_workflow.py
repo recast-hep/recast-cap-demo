@@ -17,7 +17,7 @@ def workflow_command(ctx,workdir):
     log.info('preset parameters are %s',fixed_pars)
     yadage_pars = os.path.join(initdir,'input.yaml')
 
-    log.info('running recast workflow on context {}'.format(ctx))
+    log.info('running recast workflow on context %s',ctx)
 
     if not os.path.exists(workdir):
         log.error('workdirectory: %s does not exist',workdir)
