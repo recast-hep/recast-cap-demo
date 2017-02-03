@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-  name = 'recast-cap-demo',
+  name = 'recast-yadage-plugin',
   version = '0.0.1',
-  description = 'recast-cap-demo',
+  description = 'recast-yadage-plugin',
   url = '',
   author = 'Lukas Heinrich',
   author_email = 'lukas.heinrich@cern.ch',

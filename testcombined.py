@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import click
 import recastcelery.backendtasks
-import recastcap.backendtasks
+import recastyadage.backendtasks
 
 specs = {}
 
@@ -76,7 +76,7 @@ specs['spec4'] =  {
 def main(url,results,specname,cleanup):
     ctx = {
         'jobguid': 'dummyjobid',
-        'entry_point':'recastcap.backendtasks:recast',
+        'entry_point':'recastyadage.backendtasks:recast',
         'backend':'testbackend',
         'shipout_base':'shipout_dummy',
         'resultlist':results.split(','),

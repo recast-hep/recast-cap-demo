@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import click
 import recastcelery.backendtasks
-import recastcap.backendtasks
 
 @click.command()
 @click.argument('analysis')
@@ -16,7 +15,7 @@ def main(analysis,url,results,toplevel,cleanup):
         'inputURL':url,
 
         'backend':'testbackend',
-        'entry_point':'recastcap.backendtasks:recast',
+        'entry_point':'recastyadage.backendtasks:recast',
         'resultlist':results.split(','),
 
         'workflow':analysis,
