@@ -8,7 +8,7 @@ log = logging.getLogger('RECAST')
 def workflow_command(ctx,workdir):
     fixed_pars = ctx.get('fixed_pars',{})
     initdir = os.path.join(workdir,'inputs')
-    if not ps.path.exists(initdir):
+    if not os.path.exists(initdir):
         os.makedirs(initdir)
     presetfilename = os.path.join(initdir,'preset.yaml')
     with open(presetfilename,'w') as presetfile:
