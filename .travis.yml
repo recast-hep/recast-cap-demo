@@ -20,5 +20,7 @@ script:
 - find /tmp/recast_quarantine
 - docker build -t lukasheinrich/recast-cap-demo .
 - echo $DOCKERLOGIN
+- docker login -u $DOCKERLOGIN -p $DOCKERPW
+- docker push lukasheinrich/recast-cap-demo:githead
 env:
   secure: L6ZehbWR/2Fr0EC4VbLpl3+uhXeBXi1CPMLQTfmiLR14y9IdA7grPo9HXXTc0KlyuHxLXNAwKEwEkypzqxEh1PY2NDBDTDycmTJfjL8T458uJoH5SGxGKiF+zZt/OLEyKQKSAFtEVD5g2Ag+TkXjVbnTtQMR7a+GyQhybnuGYxTNur+9CM4lf2+bBu3Pxn2cHljL6qv2okJLaD4liXnr3Ow83nLy1b/X052jVjlHFkfvobrTFpfmgRFeoMVJAmJ5Fegv1jkg5ybjOe5PiXf4dvi8Dogru0vh7uZAVCuCTw46xd+h7x0/8DyOuKLSZud4AS9SmWdjsYfrzcTL8LY+Why3xc3dVjkjLolzvOiYfPLoecwpeLNgCltilUswYnJnc5haQcXo6fhmOj+n4KGw3J23Hbccj/k0IBDp5cB52czzM4KZHcfTUc7P2f9o3STCyhUal3xsyKphzcJaEhHANXw+eH8ZVrzlcGU/UXcmHYpopSGo6P0u07M6iUCaQROCvN3wfMGWlZLY7tKb/JvdRdTEkAnLqrT7olKKpWYBuGRouKr8THWhPoIEILEQ9SyT+aYx1qoe2KmTNei+BTwdvD9mZ995ZQB3ooZownzdE1A7CClkUjtWppCaBJaBZ+5yxBeHmkARSYM6K5BaxXZf3wloCJciIre/lK8o73m5V2w=
