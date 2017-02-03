@@ -32,6 +32,41 @@ specs['spec2'] =  {
     }
 }
 
+specs['spec3'] = {
+    'adapter': {
+        'toplevel': 'from-github/mcevgen/pythia_delphes',
+        'interface_parameters': {
+            'xsecval': {'output': 'xsection.value', 'stages': 'upstream.[0].init', 'unwrap': True},
+            'rootfiles': {'output': 'rootfile', 'stages': 'upstream.[0].delphes'},
+            'xsec_in_pb': {'output': 'xsec_in_pb', 'stages': 'upstream.[0].init', 'unwrap': True}
+        },
+        'workflow': 'workflow.yml'
+    },
+    'analysis': {
+        'toplevel': 'from-github/recast_analyses/delphes_analysis',
+        'preset_pars': {
+            'obsdata': '/some/obs/data',
+            'storedbgdata': '/some/bg/data'
+        },
+        'workflow': 'analysis_flow.yml'
+    }
+}
+
+
+specs['spec4'] =  {
+    'adapter': {
+        'toplevel': 'from-github/mcevgen/pythia_delphes',
+        'interface_parameters': {
+            'rootfiles': {'output': 'rootfile', 'stages': 'upstream.[0].delphes'},
+            'xsec_in_pb': {'output': 'xsec_in_pb', 'stages': 'upstream.[0].init', 'unwrap': True}
+        },
+        'workflow': 'workflow.yml'
+    },
+    'analysis': {
+        'toplevel': 'from-github/recast_analyses/delphes_analysis',
+        'preset_pars': {'obsdata': '/some/obs/data', 'bgdata': '/some/bg/data'},
+        'workflow': 'analysis_flow.yml'}
+}
 
 @click.command()
 @click.argument('url')

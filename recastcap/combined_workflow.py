@@ -38,11 +38,14 @@ def workflow_command(ctx,workdir):
 	
 	prepped = combine_prepare(template,adapter,ctx['combinedspec']['analysis'])
 
-	initdata = yaml.load(open('{}/inputs/input.yaml'.format(workdir)))
-	initdata = discover_initfiles(initdata,os.path.realpath(workdir))
+	input_path = '{}/inputs/input.yaml'.format(workdir)
+	if os.path.exists('{}/inputs/input.yaml'.format(workdir))
+		initdata = yaml.load(open())
+		initdata = discover_initfiles(initdata,os.path.join(os.path.realpath(workdir),'inputs'))
+	else:
+		initdata = {}
 
 	finalized = finalize_combination(prepped,initdata)	
-
 	combinedfilename = '{}_combined.yml'.format(ctx['jobguid'])
 	yaml.safe_dump(json.loads(json.dumps(finalized, cls = WithJsonRefEncoder)), stream = open(combinedfilename,'w'))
 	return 'yadage-run -u {updateinterval} -b {backend} {workdir} {workflow}'.format(
