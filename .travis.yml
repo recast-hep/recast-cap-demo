@@ -1,23 +1,24 @@
 sudo: required
-
 services:
-  - docker
-
+- docker
 language: python
 python:
-  - '2.7'
-
+- '2.7'
 install:
-  - sudo apt-get install -y graphviz imagemagick
-  - pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links
-  - pip install . --process-dependency-links
-
+- sudo apt-get install -y graphviz imagemagick
+- pip install git+git://github.com/recast-hep/recast-backend.git@master --process-dependency-links
+- pip install . --process-dependency-links
 script:
-  - "echo 'events: 100' > ctx.yml"
-  - yadage-run -t from-github/testing/busybox-flow workdir rootflow.yml
-  - RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root,nonexistent,world.txt --no-cleanup -t from-github/testing/busybox-flow
-  - find workdirs
-  - rm -rf workdirs
-  - RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip fit.workspace.root,nonexistent,world.txt -t from-github/testing/busybox-flow
-  - find /tmp/recast_quarantine
-  - docker build -t lukasheinrich/recast-cap-demo .
+- 'echo ''events: 100'' > ctx.yml'
+- yadage-run -t from-github/testing/busybox-flow workdir rootflow.yml
+- RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip
+  fit.workspace.root,nonexistent,world.txt --no-cleanup -t from-github/testing/busybox-flow
+- find workdirs
+- rm -rf workdirs
+- RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip
+  fit.workspace.root,nonexistent,world.txt -t from-github/testing/busybox-flow
+- find /tmp/recast_quarantine
+- docker build -t lukasheinrich/recast-cap-demo .
+- echo $DOCKERLOGIN
+env:
+  secure: XVRoPkQrxhUbkuDb8Mct0/4OUqE+w9K6K4QLCrLOSGqojUDGjPPtpCVlJwefzW/uHRjqEJkQ1C+23L3ZQClzUJNPfFRtDLm0+jAGEThRxfKjZ7zhcq7TJqtVNKfGebTLXTkOd3Ma3DtBUX1dPm/dxv2JP98Vne3krjZURRGeajOngKYN0GmAIfRyfWEoh1O6OQ1d7qN97qzqR6pla/z5TYrPBwUdNxtfYm3EkCq245ZpMyOf3iAaVRKlBsMTzP9lwY6SoEN57W0meolJr9MrBGEOTMZmxkxz5RhxLB6vmyhTC567shprlVflhtwY2P7oQTrhqnBK0X0JEG9E3xdHyLFezON/mpvt9FNK192tiPp7CtXMcz5dJ6/xw7NWwWoWKNsZbgkrpUxq5Aqx5eOZI9RYAqk2lEhBFyKzaKXMBBeU9B/1yWHlPJjH3zQtp40CwHxt3Zlb3i9P2ulq6TERWz4jV46EYnvv99Dnwprox5TOD5eZAtH/uzZsRtfNZjOHbVVrOltBp2pE7iNAD7A10TxfGen5caEHvZFR+nQm79gCqO/3k7hQpWu+GrTCGXuN+V9O+Exu6e8/MaXcfe67ubtNJyg/8tJZzSLw+3GBn3znk3auTRlctSV3XhFS+JRCXy4Q4F/+uTNGhlxQHhFWt0sGDwsT2Mb/S3DR1AJLwGI=
