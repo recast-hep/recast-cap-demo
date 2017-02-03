@@ -7,12 +7,15 @@ log = logging.getLogger('RECAST')
 
 def workflow_command(ctx,workdir):
     fixed_pars = ctx.get('fixed_pars',{})
-    presetfilename = '{}/inputs/preset.yaml'.format(workdir)
+    initdir = os.path.join(workdir,'inputs')
+    if not ps.path.exists(initdir):
+        os.makedirs(initdir)
+    presetfilename = os.path.join(initdir,'preset.yaml')
     with open(presetfilename,'w') as presetfile:
         yaml.dump(fixed_pars,presetfile, default_flow_style = False)
 
     log.info('preset parameters are %s',fixed_pars)
-    yadage_pars = '{}/inputs/input.yaml'.format(workdir)
+    yadage_pars = os.path.join(initdir,'input.yaml')
 
     log.info('running recast workflow on context {}'.format(ctx))
 
