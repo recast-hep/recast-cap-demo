@@ -39,7 +39,7 @@ def workflow_command(ctx,workdir):
 	prepped = combine_prepare(template,adapter,ctx['combinedspec']['analysis'])
 
 	input_path = '{}/inputs/input.yaml'.format(workdir)
-	if os.path.exists('{}/inputs/input.yaml'.format(workdir))
+	if os.path.exists(input_path):
 		initdata = yaml.load(open())
 		initdata = discover_initfiles(initdata,os.path.join(os.path.realpath(workdir),'inputs'))
 	else:

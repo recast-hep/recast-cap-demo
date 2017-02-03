@@ -1,11 +1,9 @@
 import logging
 import subprocess
-import time
 import os
 import shlex
 import simple_workflow
 import combined_workflow
-import re
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('RECAST')
@@ -24,7 +22,7 @@ def recast(ctx):
 
     subprocess.call(shlex.split('find {}'.format(workdir)))
 
-    yadage_env = env = os.environ.copy()
+    yadage_env = os.environ.copy()
     yadage_env['RECAST_JOBGUID'] = ctx['jobguid']
     yadage_env['YADAGE_CUSTOM_TRACKER'] = 'recastcap.tracker:RECASTTracker'
 
