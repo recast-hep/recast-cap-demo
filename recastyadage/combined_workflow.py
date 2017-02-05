@@ -40,7 +40,7 @@ def workflow_command(ctx,workdir):
 
     input_path = '{}/inputs/input.yaml'.format(workdir)
     if os.path.exists(input_path):
-        initdata = yaml.load(open())
+        initdata = yaml.load(open(input_path))
         initdata = discover_initfiles(initdata,os.path.join(os.path.realpath(workdir),'inputs'))
     else:
         initdata = {}
