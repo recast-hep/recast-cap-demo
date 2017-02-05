@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import click
 import recastcelery.backendtasks
-import recastyadage.backendtasks
 
 specs = {}
 

@@ -28,7 +28,7 @@ def finalize_combination(template,upstream_pars):
 
 def workflow_command(ctx,workdir):
 
-    templatepath = pkg_resources.resource_filename('recastcap','resources/basicinterfacetempl.yml')
+    templatepath = pkg_resources.resource_filename('recastyadage','resources/basicinterfacetempl.yml')
 
     template = yaml.load(open(templatepath))
     if ctx['combinedspec']['adapter'] == 'from-request':
