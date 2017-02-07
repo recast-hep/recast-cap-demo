@@ -50,7 +50,7 @@ def workflow_command(ctx,workdir):
     yaml.safe_dump(json.loads(json.dumps(finalized, cls = WithJsonRefEncoder)), stream = open(combinedfilename,'w'))
     return 'yadage-run -u {updateinterval} -b {backend} {workdir} {workflow}'.format(
         workdir = workdir,
-        updateinterval = 10,
+        updateinterval = 30,
         backend = os.environ.get('RECAST_YADAGEBACKEND','multiproc:2'),
         workflow = combinedfilename
     )
