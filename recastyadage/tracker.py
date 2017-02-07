@@ -3,7 +3,7 @@ import os
 import recastcelery.messaging
 import logging
 from yadage.helpers import WithJsonRefEncoder
-from adage.tracker import SimpleReportTracker
+from adage.trackers import SimpleReportTracker
 class RECASTTracker(object):
     def __init__(self):
         self.jobguid = os.environ['RECAST_JOBGUID']
