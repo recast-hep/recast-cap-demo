@@ -12,7 +12,8 @@ class RECASTTracker(object):
 
     def track(self,adageobj):
         serialized = json.dumps(adageobj.json(), cls=WithJsonRefEncoder, sort_keys=True)
-        recastcelery.messaging.generic_message(self.jobguid,'yadage_state',json.loads(serialized))
+        recastcelery.messagings.socketlog(self.jobguid,'noop track.. but still alive')
+        # recastcelery.messaging.generic_message(self.jobguid,'yadage_state',json.loads(serialized))
 
     def finalize(self,adageobj):
         self.track(adageobj)
