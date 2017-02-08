@@ -2,7 +2,6 @@ import json
 import jq
 import os
 import recastcelery.messaging
-import logging
 from yadage.helpers import WithJsonRefEncoder
 from adage.trackers import SimpleReportTracker
 class RECASTTracker(object):
@@ -10,7 +9,7 @@ class RECASTTracker(object):
         self.jobguid = os.environ['RECAST_JOBGUID']
         self.log, self.handler = recastcelery.messaging.setupLogging(self.jobguid)
         self.tracker = SimpleReportTracker(self.log,120)
-        
+
     def initialize(self,adageobj):
     	self.tracker.initialize(adageobj)
         self.send_state(adageobj)
