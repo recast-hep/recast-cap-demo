@@ -11,13 +11,16 @@ import recastcelery.backendtasks
 def main(analysis,url,results,toplevel,cleanup):
     ctx = {
         'jobguid': 'dummyjobid',
-        'shipout_base':'shipout_dummy',
+        'shipout_spec': {
+            'user': 'dummy_user',
+            'host': 'dummy_host',
+            'port': 'dummy_port',
+            'location': 'dummy_location'
+        },
         'inputURL':url,
-
         'backend':'testbackend',
         'entry_point':'recastyadage.backendtasks:recast',
         'resultlist':results.split(','),
-
         'workflow':analysis,
         'toplevel':toplevel,
     }

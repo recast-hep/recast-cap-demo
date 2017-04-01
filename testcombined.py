@@ -77,7 +77,12 @@ def main(url,results,specname,cleanup):
         'jobguid': 'dummyjobid',
         'entry_point':'recastyadage.backendtasks:recast',
         'backend':'testbackend',
-        'shipout_base':'shipout_dummy',
+        'shipout_spec': {
+            'user': 'dummy_user',
+            'host': 'dummy_host',
+            'port': 'dummy_port',
+            'location': 'dummy_location'
+        },
         'resultlist':results.split(','),
         'inputURL':url,
         'combinedspec': specs[specname]

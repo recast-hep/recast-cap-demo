@@ -15,9 +15,9 @@ def recast(ctx):
     workdir = 'workdirs/{}'.format(ctx['jobguid'])
 
     if 'combinedspec' in ctx:
-        cmd = combined_workflow.workflow_command(ctx,workdir)
+        cmd = combined_workflow.workflow_command(ctx,workdir, backend = 'fromenv')
     else:
-        cmd = simple_workflow.workflow_command(ctx,workdir)
+        cmd = simple_workflow.workflow_command(ctx,workdir, backend = 'fromenv')
 
     log.info('running cmd: %s',cmd)
 

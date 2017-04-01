@@ -26,11 +26,10 @@ def finalize_combination(template,upstream_pars):
 
 
 
-def workflow_command(ctx,workdir):
-
+def workflow_command(ctx,workdir,backend):
     templatepath = pkg_resources.resource_filename('recastyadage','resources/basicinterfacetempl.yml')
-
     template = yaml.load(open(templatepath))
+
     if ctx['combinedspec']['adapter'] == 'from-request':
         adapter = yaml.load(open('{}/inputs/evgenflow.yml'.format(workdir)))
     else:
@@ -51,6 +50,6 @@ def workflow_command(ctx,workdir):
     return 'yadage-run -u {updateinterval} -b {backend} {workdir} {workflow}'.format(
         workdir = workdir,
         updateinterval = 30,
-        backend = os.environ.get('RECAST_YADAGEBACKEND','multiproc:2'),
+        backend = backend,
         workflow = combinedfilename
     )

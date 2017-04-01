@@ -5,7 +5,7 @@ import os
 log = logging.getLogger('RECAST')
 
 
-def workflow_command(ctx,workdir):
+def workflow_command(ctx,workdir,backend):
     fixed_pars = ctx.get('fixed_pars',{})
     initdir = os.path.join(workdir,'inputs')
     if not os.path.exists(initdir):
@@ -27,7 +27,7 @@ def workflow_command(ctx,workdir):
 
     cmd = 'yadage-run -u {updateinterval} -d inputs -b {backend} -t {toplevel} {workdir} {workflow} {initpar} {presetpar}'.format(
         workdir = workdir,
-        backend = os.environ.get('RECAST_YADAGEBACKEND','multiproc:2'),
+        backend = backend,
         workflow = ctx['workflow'],
         initpar  = yadage_pars if os.path.exists(yadage_pars) else '',
         presetpar = presetfilename,

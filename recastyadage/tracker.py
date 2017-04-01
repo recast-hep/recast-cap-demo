@@ -22,7 +22,7 @@ class RECASTTracker(object):
     def finalize(self,adageobj):
     	self.tracker.finalize(adageobj)
         self.send_state(adageobj)
-
+        
     def send_state(self,adageobj):
         serialized = json.dumps(adageobj.json(), cls=WithJsonRefEncoder, sort_keys=True)
         tosend = jq.jq('{dag: {nodes: [.dag.nodes[]|{state: .state, id: .id, name: .name}], edges: .dag.edges}}').transform(
