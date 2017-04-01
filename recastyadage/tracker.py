@@ -8,7 +8,7 @@ class RECASTTracker(object):
     def __init__(self):
         self.jobguid = os.environ['RECAST_JOBGUID']
         self.log, self.handler = recastcelery.messaging.setupLogging(self.jobguid)
-        self.tracker = SimpleReportTracker(self.log,120)
+        self.tracker = SimpleReportTracker('RECAST',120)
 
     def initialize(self,adageobj):
     	self.tracker.initialize(adageobj)
