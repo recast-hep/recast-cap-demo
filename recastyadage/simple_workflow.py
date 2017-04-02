@@ -4,7 +4,6 @@ import os
 
 log = logging.getLogger('RECAST')
 
-
 def workflow_command(ctx,workdir):
     fixed_pars = ctx.get('fixed_pars',{})
     initdir = os.path.join(workdir,'inputs')

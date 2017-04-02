@@ -24,8 +24,6 @@ def finalize_combination(template,upstream_pars):
     template['stages'][0]['scheduler']['parameters'] = upstream_pars
     return template
 
-
-
 def workflow_command(ctx,workdir):
 
     templatepath = pkg_resources.resource_filename('recastyadage','resources/basicinterfacetempl.yml')

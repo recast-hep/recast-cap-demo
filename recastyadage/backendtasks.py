@@ -10,9 +10,10 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('RECAST')
 
 def recast(ctx):
-    log.info('running CAP analysis')
+    log.info('running yadage workflow')
+    jogbuid = ctx['jobguid']
 
-    workdir = 'workdirs/{}'.format(ctx['jobguid'])
+    workdir = os.path.join('workdirs',jogbuid)
 
     if 'combinedspec' in ctx:
         cmd = combined_workflow.workflow_command(ctx,workdir)
@@ -24,7 +25,7 @@ def recast(ctx):
     subprocess.call(shlex.split('find {}'.format(workdir)))
 
     yadage_env = os.environ.copy()
-    yadage_env['RECAST_JOBGUID'] = ctx['jobguid']
+    yadage_env['RECAST_JOBGUID'] = jogbuid
     if yaml.load(os.environ.get('RECAST_PLUGIN_TRACK','true')):
         yadage_env['YADAGE_CUSTOM_TRACKER'] = 'recastyadage.tracker:RECASTTracker'
 
