@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('RECAST')
 
 def recast(ctx):
-    log.info('running yadage workflow')
+    log.info('running yadage workflow for context: %s', ctx)
     jogbuid = ctx['jobguid']
 
     workdir = os.path.join('workdirs',jogbuid)
