@@ -15,7 +15,7 @@ def main(analysis,url,results,toplevel,cleanup):
         'inputURL':url,
 
         'backend':'testbackend',
-        'entry_point':'recastyadage.backendtasks:recast',
+        'entry_point':'yadageworker.backendtasks:recast',
         'resultlist':results.split(','),
 
         'workflow':analysis,

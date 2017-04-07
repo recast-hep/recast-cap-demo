@@ -75,7 +75,7 @@ specs['spec4'] =  {
 def main(url,results,specname,cleanup):
     ctx = {
         'jobguid': 'dummyjobid',
-        'entry_point':'recastyadage.backendtasks:recast',
+        'entry_point':'yadageworker.backendtasks:recast',
         'backend':'testbackend',
         'shipout_base':'shipout_dummy',
         'resultlist':results.split(','),
