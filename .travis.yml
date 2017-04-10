@@ -18,6 +18,7 @@ script:
 #- RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip
 #  fit.workspace.root,nonexistent,world.txt -t from-github/testing/busybox-flow
 #- find /tmp/recast_quarantine
+- docker pull cern/cc7-base
 - docker build -t "recast/yadage-worker:githead-${TRAVIS_BRANCH}" .
 - echo $DOCKERLOGIN
 - docker login -u $DOCKERLOGIN -p $DOCKERPW
