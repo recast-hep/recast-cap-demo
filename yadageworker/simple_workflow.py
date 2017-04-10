@@ -30,7 +30,7 @@ def workflow_command(ctx,workdir):
         workflow = ctx['workflow'],
         initpar  = yadage_pars if os.path.exists(yadage_pars) else '',
         presetpar = presetfilename,
-        updateinterval = 30,
+        updateinterval = os.environ.get('RECAST_YADAGEUPDATE',30),
         toplevel = ctx.get('toplevel','from-github/pseudocap')
     )
     return cmd
