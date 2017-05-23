@@ -1,6 +1,6 @@
 # yadage-worker
 
-[![Build Status](https://travis-ci.org/recast-hep/recast-yadage-plugin.svg?branch=master)](https://travis-ci.org/recast-hep/recast-yadage-plugin)
-[![Code Health](https://landscape.io/github/recast-hep/recast-yadage-plugin/master/landscape.svg?style=flat)](https://landscape.io/github/recast-hep/recast-yadage-plugin/master)
+[![Build Status](https://travis-ci.org/recast-hep/yadage-worker.svg?branch=master)](https://travis-ci.org/recast-hep/yadage-worker)
+[![Code Health](https://landscape.io/github/recast-hep/yadage-worker/master/landscape.svg?style=flat)](https://landscape.io/github/recast-hep/yadage-worker/master)
 
-a workflwo plugin for Yadage Workflows.
+a workflow plugin for Yadage Workflows.
