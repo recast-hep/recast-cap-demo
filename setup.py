@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-  name = 'recast-yadage-plugin',
+  name = 'yadage-worker',
   version = '0.0.1',
-  description = 'recast-yadage-plugin',
+  description = 'yadage-worker',
   url = '',
   author = 'Lukas Heinrich',
   author_email = 'lukas.heinrich@cern.ch',
