@@ -1,6 +1,6 @@
 FROM fedora
 RUN dnf install -y gcc gcc-c++ graphviz-devel ImageMagick python-devel libffi-devel openssl openssl-devel unzip nano autoconf automake libtool openssh-clients
-RUN dnf install -y dnf redhat-rpm-config hostname
+RUN dnf install -y dnf redhat-rpm-config hostname which wget less
 RUN curl https://bootstrap.pypa.io/get-pip.py | python -
 COPY . /recast_yadage_plugin
 WORKDIR /recast_yadage_plugin
