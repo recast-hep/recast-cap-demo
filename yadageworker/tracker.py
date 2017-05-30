@@ -26,7 +26,7 @@ class RECASTTracker(object):
 
     def send_state(self,adageobj):
         serialized = json.dumps(adageobj.json(), cls=WithJsonRefEncoder, sort_keys=True)
-        tosend = jq.jq('{dag: {nodes: [.dag.nodes[]|{state: .state, id: .id, name: .name}], edges: .dag.edges}}').transform(
+        tosend = jq.jq('{dag: {nodes: [.dag.nodes[]|{state: .state, id: .id, name: .name, proxy: .proxy}], edges: .dag.edges}}').transform(
             json.loads(serialized)
         )
         recastcelery.messaging.generic_message(self.jobguid,'yadage_state',tosend)
