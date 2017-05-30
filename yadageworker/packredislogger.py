@@ -7,8 +7,8 @@ class RedisHandler(logging.StreamHandler):
     def __init__(self,jobid,topic):
     	self.red = redis.StrictRedis(
     		host = os.environ.get('PACKTIVITY_LOGGER_HOST','localhost'),
-    		port = os.environ.get('PACKTIVITY_LOGGER_HOST',6379),
-    		db = os.environ.get('PACKTIVITY_LOGGER_HOST',0)
+    		port = os.environ.get('PACKTIVITY_LOGGER_PORT',6379),
+    		db = os.environ.get('PACKTIVITY_LOGGER_DB',0)
     	)
     	self.jobid = jobid
     	self.topic = topic
