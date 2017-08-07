@@ -27,7 +27,7 @@ def run_workflow(ctx):
     yadage_env = os.environ.copy()
     yadage_env['WFLOW_JOBGUID'] = jogbuid
     if yaml.load(os.environ.get('WFLOW_PLUGIN_TRACK','true')):
-        yadage_env['YADAGE_CUSTOM_TRACKER'] = 'yadageworker.tracker:EmitTracker'
+        yadage_env['YADAGE_CUSTOM_TRACKER'] = 'wflowyadageworker.tracker:EmitTracker'
 
     if 'WFLOW_IN_DOCKER_WORKDIRS_VOL' in os.environ:
         #publish absolute path of this workdir for use by plugins

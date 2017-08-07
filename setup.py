@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-  name = 'yadage-worker',
+  name = 'wflow-yadage-worker',
   version = '0.0.1',
-  description = 'yadage-worker',
+  description = 'wflow-yadage-worker',
   url = '',
   author = 'Lukas Heinrich',
   author_email = 'lukas.heinrich@cern.ch',

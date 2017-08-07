@@ -75,7 +75,7 @@ specs['spec4'] =  {
 def main(url,results,specname,cleanup):
     ctx = {
         'jobguid': 'dummyjobid',
-        'entry_point':'yadageworker.backendtasks:run_workflow',
+        'entry_point':'wflowyadageworker.backendtasks:run_workflow',
         'backend':'testbackend',
         'shipout_base':'shipout_dummy',
         'resultlist':results.split(','),

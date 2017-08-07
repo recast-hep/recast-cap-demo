@@ -15,7 +15,7 @@ def main(analysis,url,results,toplevel,cleanup):
         'inputURL':url,
 
         'backend':'testbackend',
-        'entry_point':'yadageworker.backendtasks:run_workflow',
+        'entry_point':'wflowyadageworker.backendtasks:run_workflow',
         'resultlist':results.split(','),
 
         'workflow':analysis,
