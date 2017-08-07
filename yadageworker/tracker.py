@@ -1,15 +1,15 @@
 import json
 import jq
 import os
-import recastcelery.messaging
+import wflowcelery.messaging
 from yadage.helpers import WithJsonRefEncoder
 from adage.trackers import SimpleReportTracker
 
-class RECASTTracker(object):
+class EmitTracker(object):
     def __init__(self):
-        self.jobguid = os.environ['RECAST_JOBGUID']
-        self.log, self.handler = recastcelery.messaging.setupLogging(self.jobguid)
-        self.tracker = SimpleReportTracker('RECAST',120)
+        self.jobguid = os.environ['WFLOW_JOBGUID']
+        self.log, self.handler = wflowcelery.messaging.setupLogging(self.jobguid)
+        self.tracker = SimpleReportTracker('WFLOWSERVICELOG',120)
 
     def initialize(self,adageobj):
     	self.tracker.initialize(adageobj)
@@ -29,5 +29,5 @@ class RECASTTracker(object):
         tosend = jq.jq('{dag: {nodes: [.dag.nodes[]|{state: .state, id: .id, name: .name, proxy: .proxy}], edges: .dag.edges}}').transform(
             json.loads(serialized)
         )
-        recastcelery.messaging.generic_message(self.jobguid,'yadage_state',tosend)
+        wflowcelery.messaging.emit(self.jobguid,'wflow_state',{'wflow_type': 'yadage', 'state': tosend})
     	

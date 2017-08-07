@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-import recastcelery.backendtasks
+import wflowcelery.backendtasks
 
 specs = {}
 
@@ -75,7 +75,7 @@ specs['spec4'] =  {
 def main(url,results,specname,cleanup):
     ctx = {
         'jobguid': 'dummyjobid',
-        'entry_point':'yadageworker.backendtasks:recast',
+        'entry_point':'yadageworker.backendtasks:run_workflow',
         'backend':'testbackend',
         'shipout_base':'shipout_dummy',
         'resultlist':results.split(','),
@@ -83,10 +83,10 @@ def main(url,results,specname,cleanup):
         'combinedspec': specs[specname]
     }
 
-    recastcelery.backendtasks.run_analysis_standalone(
-        recastcelery.backendtasks.setupFromURL,
-        recastcelery.backendtasks.dummy_onsuccess,
-        recastcelery.backendtasks.cleanup if cleanup else lambda ctx: None,
+    wflowcelery.backendtasks.run_analysis_standalone(
+        wflowcelery.backendtasks.setupFromURL,
+        wflowcelery.backendtasks.dummy_onsuccess,
+        wflowcelery.backendtasks.cleanup if cleanup else lambda ctx: None,
         ctx,
         redislogging = False
     )

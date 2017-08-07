@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-import recastcelery.backendtasks
+import wflowcelery.backendtasks
 
 @click.command()
 @click.argument('analysis')
@@ -15,17 +15,17 @@ def main(analysis,url,results,toplevel,cleanup):
         'inputURL':url,
 
         'backend':'testbackend',
-        'entry_point':'yadageworker.backendtasks:recast',
+        'entry_point':'yadageworker.backendtasks:run_workflow',
         'resultlist':results.split(','),
 
         'workflow':analysis,
         'toplevel':toplevel,
     }
 
-    recastcelery.backendtasks.run_analysis_standalone(
-        recastcelery.backendtasks.setupFromURL,
-        recastcelery.backendtasks.dummy_onsuccess,
-        recastcelery.backendtasks.cleanup if cleanup else lambda ctx: None,
+    wflowcelery.backendtasks.run_analysis_standalone(
+        wflowcelery.backendtasks.setupFromURL,
+        wflowcelery.backendtasks.dummy_onsuccess,
+        wflowcelery.backendtasks.cleanup if cleanup else lambda ctx: None,
         ctx,
         redislogging = False
     )
