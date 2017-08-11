@@ -2,7 +2,7 @@ import json
 import jq
 import os
 import wflowcelery.messaging
-from yadage.helpers import WithJsonRefEncoder
+from yadage.utils import WithJsonRefEncoder
 from adage.trackers import SimpleReportTracker
 
 class EmitTracker(object):

@@ -1,7 +1,6 @@
 import yaml
 import yadage.workflow_loader
-from yadage.helpers import WithJsonRefEncoder
-from yadage.clihelpers import discover_initfiles    
+from yadage.utils import discover_initfiles,WithJsonRefEncoder  
 import json
 import pkg_resources
 import os
@@ -21,7 +20,7 @@ def combine_prepare(template,adapter,analysis):
     return template
 
 def finalize_combination(template,upstream_pars):
-    template['stages'][0]['scheduler']['parameters'] = upstream_pars
+    template['stages'][0]['scheduler']['bindings'] = upstream_pars
     return template
 
 def workflow_command(ctx,workdir):
@@ -37,16 +36,16 @@ def workflow_command(ctx,workdir):
     prepped = combine_prepare(template,adapter,ctx['combinedspec']['analysis'])
 
     input_path = '{}/inputs/input.yaml'.format(workdir)
-    if os.path.exists(input_path):
-        initdata = yaml.load(open(input_path))
-        initdata = discover_initfiles(initdata,os.path.join(os.path.realpath(workdir),'inputs'))
-    else:
-        initdata = {}
 
-    finalized = finalize_combination(prepped,initdata)  
+    upstream_pars = ctx['combinedspec']['adapter'].get('preset_pars',{})
+    if os.path.exists(input_path):
+        upstream_pars = yaml.load(open(input_path))
+        upstream_pars = discover_initfiles(upstream_pars,os.path.join(os.path.realpath(workdir),'inputs'))
+    finalized = finalize_combination(prepped,upstream_pars)  
+
     combinedfilename = '{}_combined.yml'.format(ctx['jobguid'])
     yaml.safe_dump(json.loads(json.dumps(finalized, cls = WithJsonRefEncoder)), stream = open(combinedfilename,'w'))
-    return 'yadage-run -u {updateinterval} -b {backend} {workdir} {workflow}'.format(
+    return 'yadage-run -u {updateinterval} -b {backend} {workdir} {workflow} --visualize'.format(
         workdir = workdir,
         updateinterval = os.environ.get('WFLOW_YADAGEUPDATE',30),
         backend = os.environ.get('WFLOW_YADAGEBACKEND','multiproc:2'),

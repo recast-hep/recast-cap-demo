@@ -20,8 +20,8 @@ class RedisHandler(logging.StreamHandler):
     	self.red.publish(os.environ.get('PACKTIVITY_LOGGER_CHANNEL','logstash:in'),json.dumps(data))
 
 formatter = logging.Formatter('%(message)s')
-def add_handlers(log,nametag,context,topic):
-    fh = RedisHandler(nametag,topic)
+def add_handlers(log,metadata,state,topic):
+    fh = RedisHandler(metadata['name'],topic)
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(formatter)
     log.addHandler(fh)

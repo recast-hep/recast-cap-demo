@@ -24,7 +24,7 @@ def workflow_command(ctx,workdir):
     if not os.path.exists(yadage_pars):
         log.warning('workflow parameter file: %s does not exist',yadage_pars)
 
-    cmd = 'yadage-run -u {updateinterval} -d inputs -b {backend} -t {toplevel} {workdir} {workflow} {initpar} {presetpar}'.format(
+    cmd = 'yadage-run -u {updateinterval} -d initdir=inputs -b {backend} -t {toplevel} {workdir} {workflow} {initpar} {presetpar} --visualize'.format(
         workdir = workdir,
         backend = os.environ.get('WFLOW_YADAGEBACKEND','multiproc:2'),
         workflow = ctx['workflow'],

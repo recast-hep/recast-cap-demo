@@ -1,9 +1,11 @@
 stages:
   - name: upstream
     scheduler:
-      scheduler_type: singlestep-stage
-      parameters: null
+      scheduler_type: jq-stage
+      stepscript: >
+        [.]
       workflow: null
+      bindings: null
   - name: downstream
     dependencies: ['upstream']
     scheduler:
