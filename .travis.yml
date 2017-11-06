@@ -18,16 +18,12 @@ script:
 jobs:
   include:
     - stage: docker
-      deploy:
-        on:
-          tags: true
-        provider: script
-        script:
-        - docker pull cern/cc7-base
-        - docker build -t "recast/yadage-worker:git-${TRAVIS_BRANCH}" .
-        - echo $DOCKERLOGIN
-        - docker login -u $DOCKERLOGIN -p $DOCKERPW
-        - docker push "recast/yadage-worker:git-${TRAVIS_BRANCH}"
+      script:    
+      - docker pull cern/cc7-base
+      - docker build -t "recast/yadage-worker:git-${TRAVIS_BRANCH}" .
+      - echo $DOCKERLOGIN
+      - docker login -u $DOCKERLOGIN -p $DOCKERPW
+      - docker push "recast/yadage-worker:git-${TRAVIS_BRANCH}"
 
 env:
   global:
