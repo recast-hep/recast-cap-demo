@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
   name = 'wflow-yadage-worker',
-  version = '0.0.1',
+  version = '0.0.2',
   description = 'wflow-yadage-worker',
   url = '',
   author = 'Lukas Heinrich',
