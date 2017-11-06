@@ -11,9 +11,9 @@ install:
 script:
 - 'echo ''events: 100'' > ctx.yml'
 - yadage-run -t from-github/testing/busybox-flow workdir rootflow.yml
-- RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip
-  fit.workspace.root,nonexistent,world.txt --no-cleanup -t from-github/testing/busybox-flow
-- find workdirs
+#- RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip
+#  fit.workspace.root,nonexistent,world.txt --no-cleanup -t from-github/testing/busybox-flow
+#- find workdirs
 
 jobs:
   include:
