@@ -14,15 +14,21 @@ script:
 - RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip
   fit.workspace.root,nonexistent,world.txt --no-cleanup -t from-github/testing/busybox-flow
 - find workdirs
-#- rm -rf workdirs
-#- RECAST_PLUGIN_TRACK=false ./testrunbackend.py rootflow.yml http://physics.nyu.edu/~lh1132/dummycomplex.zip
-#  fit.workspace.root,nonexistent,world.txt -t from-github/testing/busybox-flow
-#- find /tmp/recast_quarantine
-- docker pull cern/cc7-base
-- docker build -t "recast/yadage-worker:git-${TRAVIS_BRANCH}" .
-- echo $DOCKERLOGIN
-- docker login -u $DOCKERLOGIN -p $DOCKERPW
-- docker push "recast/yadage-worker:git-${TRAVIS_BRANCH}"
+
+jobs:
+  include:
+    - stage: docker
+      deploy:
+        on:
+          tags: true
+        provider: script
+        script:
+        - docker pull cern/cc7-base
+        - docker build -t "recast/yadage-worker:git-${TRAVIS_BRANCH}" .
+        - echo $DOCKERLOGIN
+        - docker login -u $DOCKERLOGIN -p $DOCKERPW
+        - docker push "recast/yadage-worker:git-${TRAVIS_BRANCH}"
+
 env:
   global:
   - secure: tZT+9iWK1FyrD1KWQ3GCe8pVd3m7xO7YqYZaqY8lWCSKEPXxUNl9hONcBDpicKnFwaEcDE/1oP4JIOolxNHeYhUVtfNN/y+odZGcgNPgrM3/NGb4WXEFGPJQNTlj4hrjBq/neZX+ZgXW73HbtJtXYsltN046rAeYWlyqE/iA1UsosEIrkz0VWwWyI7EMePK7YdpudwqNGVYWfakxTkh2gHiZesd44J0LGLkgQoTkJpAY82o9p5fXjvZd0tZuwPosjZP/BHqjc2myokioRavSsUO0USElIRmc5IflwLuS5H7t9jwBeevncFpEsSYbmdbnFEzlp6UoTVZ//NATbPcfHfrdVs37PTWQbw2XAQhh8q/zvfwo6lKW6jAG8Ywu4qVA8SRei78+/acsin3y5K1hnw8g1QVWK7RtZjiNp89dtibhzgCiABar9LtYMmLZflfsnzZ48kUGxlcxdgR8ExyflHKrd+21cI82bDZEcANFZYX+GbxaSVBiRqoJ+P0L13Qu73d9wGvc3nMyfGFhzB/Bdsh610iLchvNBxGJ2xJEqtNeENkZwrCP0vSN1HIQWnNiZohoSo6xv2KT+vadE6degPfw+fmUpZypdOu2J8TKgcTeWA3K4TEJZDw87W4E6Qa03g8Hr3Ar2Vp+EvvkRglUvgrygnA4Aqn2LhkNm/MVF2s=

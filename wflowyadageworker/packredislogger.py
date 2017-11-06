@@ -1,4 +1,5 @@
 import os
+import socket
 import logging
 import redis
 import json
@@ -16,7 +17,13 @@ class RedisHandler(logging.StreamHandler):
 
     def emit(self, record):
     	msg = self.format(record)
-    	data = {'jobguid': self.jobid, 'msg_type':'simple_log', 'msg':msg, 'topic': self.topic}
+    	data = {
+            'jobguid': self.jobid,
+            'msg_type':'simple_log',
+            'msg':msg,
+            'topic': self.topic,
+            'host': socket.gethostname()
+        }
     	self.red.publish(os.environ.get('PACKTIVITY_LOGGER_CHANNEL','logstash:in'),json.dumps(data))
 
 formatter = logging.Formatter('%(message)s')
