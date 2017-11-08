@@ -24,9 +24,11 @@ def workflow_options(ctx,workdir):
     if not os.path.exists(workdir):
         log.error('workdirectory: %s does not exist',workdir)
 
+    initdata = {'input': 'input.yaml'}
+
     return dict(
         workflow = ctx['workflow'],
         toplevel = ctx.get('toplevel','from-github/pseudocap'),
         initdata = initdata,
-        dataopts = {'initdir': os.path.abspath(os.path.join(workdir,initdir))}
+        dataopts = {'initdir': 'inputs'}
     )
