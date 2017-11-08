@@ -36,10 +36,13 @@ def run_workflow(ctx):
 
     if 'combinedspec' in ctx:
         additional_kwargs = combined_workflow.workflow_options(ctx,workdir)
+        log.info('combined workflow')
     elif type('workflow')==dict in ctx:
         additional_kwargs = simple_workflow_fromjson.workflow_options(ctx,workdir)
+        log.info('workflow from context')
     else:
         additional_kwargs = simple_workflow.workflow_options(ctx,workdir)
+        log.info('load workflow from source')
 
     yadage_kwargs.update(**additional_kwargs)
 
