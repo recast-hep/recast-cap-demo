@@ -25,6 +25,7 @@ def workflow_options(ctx,workdir):
         log.error('workdirectory: %s does not exist',workdir)
 
     return dict(
-        workflow_json = ctx['workflow_json'],
+        workflow_json = ctx['workflow'],
         initdata = initdata,
+        dataopts = {'initdir': 'inputs'}
     )
