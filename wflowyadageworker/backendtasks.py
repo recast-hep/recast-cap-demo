@@ -32,7 +32,6 @@ def run_workflow(ctx):
         dataarg = workdir,
         backend = yadage.utils.setupbackend_fromstring(backend,backendopts),
         updateinterval = os.environ.get('WFLOW_YADAGEUPDATE',30),
-
     )
 
     if 'combinedspec' in ctx:
@@ -45,15 +44,6 @@ def run_workflow(ctx):
     yadage_kwargs.update(**additional_kwargs)
 
     log.info('additional keyword arguments were %s', additional_kwargs)
-
-    if 'WFLOW_IN_DOCKER_WORKDIRS_VOL' in os.environ:
-        #publish absolute path of this workdir for use by plugins
-        workdirpath = '/'.join([os.environ['WFLOW_IN_DOCKER_WORKDIRS_VOL'],workdir])
-        os.environ['PACKTIVITY_WORKDIR_LOCATION'] = '{}:{}'.format(os.path.abspath(workdir),workdirpath)
-        log.info('plugin is running in Docker. set packtivity workdir as %s',os.environ['PACKTIVITY_WORKDIR_LOCATION'])
-
-
-
     try:
         log.info('executing yadage workflows with: %s',yadage_kwargs)
         with yadage.steering_api.steering_ctx(**yadage_kwargs) as ys:
