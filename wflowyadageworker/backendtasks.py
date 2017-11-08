@@ -11,7 +11,6 @@ import simple_workflow
 import simple_workflow_fromjson
 import combined_workflow
 
-
 import yadage.steering_api
 import yadage.utils
 
@@ -24,7 +23,7 @@ def run_workflow(ctx):
 
     workdir = os.path.join('workdirs',jobguid)
 
-    backend = os.environ['WFLOW_YADAGEBACKEND','multiproc:auto']
+    backend = os.environ.get('WFLOW_YADAGEBACKEND','multiproc:auto')
     backendopts = {}
 
     yadage_kwargs = dict(
@@ -44,7 +43,6 @@ def run_workflow(ctx):
     yadage_kwargs.update(**additional_kwargs)
 
     log.info('additional keyword arguments were %s', additional_kwargs)
-
 
     if 'WFLOW_IN_DOCKER_WORKDIRS_VOL' in os.environ:
         #publish absolute path of this workdir for use by plugins
