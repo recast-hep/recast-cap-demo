@@ -7,8 +7,6 @@ from adage.trackers import SimpleReportTracker
 
 class EmitTracker(object):
     def __init__(self,jobguid = None):
-        self.jobguid = jobguid or os.environ['WFLOW_JOBGUID']
-        self.log, self.handler = wflowcelery.messaging.setupLogging(self.jobguid)
         self.tracker = SimpleReportTracker('WFLOWSERVICELOG',120)
 
     def initialize(self,adageobj):

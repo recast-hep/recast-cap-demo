@@ -5,7 +5,7 @@ import yaml
 import json
 import shlex
 import wflowyadageworker.tracker
-
+import logging
 
 import simple_workflow
 import simple_workflow_fromjson
@@ -25,6 +25,8 @@ def run_workflow(ctx):
 
     backend = os.environ.get('WFLOW_YADAGEBACKEND','multiproc:auto')
     backendopts = {}
+
+    log.info('connecting backend: %s', backend)
 
     yadage_kwargs = dict(
         dataarg = workdir,
@@ -49,6 +51,8 @@ def run_workflow(ctx):
         workdirpath = '/'.join([os.environ['WFLOW_IN_DOCKER_WORKDIRS_VOL'],workdir])
         os.environ['PACKTIVITY_WORKDIR_LOCATION'] = '{}:{}'.format(os.path.abspath(workdir),workdirpath)
         log.info('plugin is running in Docker. set packtivity workdir as %s',os.environ['PACKTIVITY_WORKDIR_LOCATION'])
+
+
 
     try:
         log.info('executing yadage workflows with: %s',yadage_kwargs)
