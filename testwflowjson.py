@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import click
 import wflowcelery.backendtasks
-
+import yadageschemas
 @click.command()
 @click.argument('workflow')
 @click.argument('url')
@@ -17,9 +17,7 @@ def main(workflow,url,results,toplevel,cleanup):
         'backend':'testbackend',
         'entry_point':'wflowyadageworker.backendtasks:run_workflow',
         'resultlist':results.split(','),
-
-        'workflow':workflow,
-        'toplevel':toplevel,
+        'workflow_json': yadageschemas.load(workflow, toplevel, 'yadage/workflow-schema')
     }
 
     wflowcelery.backendtasks.run_analysis_standalone(

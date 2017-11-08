@@ -6,8 +6,8 @@ from yadage.utils import WithJsonRefEncoder
 from adage.trackers import SimpleReportTracker
 
 class EmitTracker(object):
-    def __init__(self):
-        self.jobguid = os.environ['WFLOW_JOBGUID']
+    def __init__(self,jobguid = None):
+        self.jobguid = jobguid or os.environ['WFLOW_JOBGUID']
         self.log, self.handler = wflowcelery.messaging.setupLogging(self.jobguid)
         self.tracker = SimpleReportTracker('WFLOWSERVICELOG',120)
 
@@ -30,4 +30,3 @@ class EmitTracker(object):
             json.loads(serialized)
         )
         wflowcelery.messaging.emit(self.jobguid,'wflow_state',{'wflow_type': 'yadage', 'state': tosend})
-    	

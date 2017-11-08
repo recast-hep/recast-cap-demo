@@ -25,7 +25,6 @@ def workflow_options(ctx,workdir):
         log.error('workdirectory: %s does not exist',workdir)
 
     return dict(
-        workflow = ctx['workflow'],
-        toplevel = ctx.get('toplevel','from-github/pseudocap'),
+        workflow_json = ctx['workflow_json'],
         initdata = initdata,
     )

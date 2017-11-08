@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import click
+import logging
 import wflowcelery.backendtasks
 
 specs = {}
@@ -11,7 +12,7 @@ specs['spec1'] =  {
         'interface_parameters': {
             'hepmcfiles': {'stages': 'upstream.[0].sherpa', 'output': 'hepmcfile', 'unwrap': True}
         }
-    }, 
+    },
     'analysis':  {
         'toplevel': '/Users/lukas/Code/yadagedev/dynamic_compose/sherpa',
         'workflow': 'rivetanflow.yml',
@@ -21,7 +22,7 @@ specs['spec1'] =  {
     }
 }
 specs['spec2'] =  {
-    'adapter': 'from-request', 
+    'adapter': 'from-request',
     'analysis':  {
         'toplevel': '/Users/lukas/Code/yadagedev/dynamic_compose/sherpa',
         'workflow': 'rivetanflow.yml',
@@ -35,7 +36,6 @@ specs['spec3'] = {
     'adapter': {
         'toplevel': 'from-github/mcevgen/pythia_delphes',
         'interface_parameters': {
-            'xsecval': {'output': 'xsection.value', 'stages': 'upstream.[0].init', 'unwrap': True},
             'rootfiles': {'output': 'rootfile', 'stages': 'upstream.[0].delphes'},
             'xsec_in_pb': {'output': 'xsec_in_pb', 'stages': 'upstream.[0].init', 'unwrap': True}
         },
@@ -43,14 +43,10 @@ specs['spec3'] = {
     },
     'analysis': {
         'toplevel': 'from-github/recast_analyses/delphes_analysis',
-        'preset_pars': {
-            'obsdata': '/some/obs/data',
-            'storedbgdata': '/some/bg/data'
-        },
+        'preset_pars': {'obsdata': '/some/obs/data', 'bgdata': '/some/bg/data'},
         'workflow': 'analysis_flow.yml'
     }
 }
-
 
 specs['spec4'] =  {
     'adapter': {
@@ -73,6 +69,9 @@ specs['spec4'] =  {
 @click.argument('results')
 @click.option('--cleanup/--no-cleanup',default = True)
 def main(url,results,specname,cleanup):
+    logging.basicConfig(level = logging.INFO)
+    log = logging.getLogger('WFLOWSERVICELOG')
+
     ctx = {
         'jobguid': 'dummyjobid',
         'entry_point':'wflowyadageworker.backendtasks:run_workflow',

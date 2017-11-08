@@ -2,47 +2,65 @@ import logging
 import subprocess
 import os
 import yaml
+import json
 import shlex
+import wflowyadageworker.tracker
+
+
 import simple_workflow
+import simple_workflow_fromjson
 import combined_workflow
+
+
+import yadage.steering_api
+import yadage.utils
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger('WFLOWSERVICELOG')
 
 def run_workflow(ctx):
     log.info('running yadage workflow for context: %s', ctx)
-    jogbuid = ctx['jobguid']
+    jobguid = ctx['jobguid']
 
-    workdir = os.path.join('workdirs',jogbuid)
+    workdir = os.path.join('workdirs',jobguid)
+
+    backend = os.environ['WFLOW_YADAGEBACKEND','multiproc:auto']
+    backendopts = {}
+
+    yadage_kwargs = dict(
+        dataarg = workdir,
+        backend = yadage.utils.setupbackend_fromstring(backend,backendopts),
+        updateinterval = os.environ.get('WFLOW_YADAGEUPDATE',30),
+
+    )
 
     if 'combinedspec' in ctx:
-        cmd = combined_workflow.workflow_command(ctx,workdir)
+        additional_kwargs = combined_workflow.workflow_options(ctx,workdir)
+    elif 'workflow_json' in ctx:
+        additional_kwargs = simple_workflow_fromjson.workflow_options(ctx,workdir)
     else:
-        cmd = simple_workflow.workflow_command(ctx,workdir)
+        additional_kwargs = simple_workflow.workflow_options(ctx,workdir)
 
-    log.info('running cmd: %s',cmd)
+    yadage_kwargs.update(**additional_kwargs)
 
-    subprocess.call(shlex.split('find {}'.format(workdir)))
+    log.info('additional keyword arguments were %s', additional_kwargs)
 
-    yadage_env = os.environ.copy()
-    yadage_env['WFLOW_JOBGUID'] = jogbuid
-    if yaml.load(os.environ.get('WFLOW_PLUGIN_TRACK','true')):
-        yadage_env['YADAGE_CUSTOM_TRACKER'] = 'wflowyadageworker.tracker:EmitTracker'
 
     if 'WFLOW_IN_DOCKER_WORKDIRS_VOL' in os.environ:
         #publish absolute path of this workdir for use by plugins
         workdirpath = '/'.join([os.environ['WFLOW_IN_DOCKER_WORKDIRS_VOL'],workdir])
-        yadage_env['PACKTIVITY_WORKDIR_LOCATION'] = '{}:{}'.format(os.path.abspath(workdir),workdirpath)
-        log.info('plugin is running in Docker. set packtivity workdir as %s',yadage_env['PACKTIVITY_WORKDIR_LOCATION'])
+        os.environ['PACKTIVITY_WORKDIR_LOCATION'] = '{}:{}'.format(os.path.abspath(workdir),workdirpath)
+        log.info('plugin is running in Docker. set packtivity workdir as %s',os.environ['PACKTIVITY_WORKDIR_LOCATION'])
 
-    proc = subprocess.Popen(shlex.split(cmd),
-                            env = yadage_env,
-                            stderr = subprocess.STDOUT,
-                            stdout = open('{}/fullyadage.log'.format(workdir),'w'))
+    try:
+        log.info('executing yadage workflows with: %s',yadage_kwargs)
+        with yadage.steering_api.steering_ctx(**yadage_kwargs) as ys:
+            if yaml.load(os.environ.get('WFLOW_PLUGIN_TRACK','true')):
+                ys.adage_argument(additional_trackers = [
+                    wflowyadageworker.tracker.EmitTracker(jobguid)
+                ])
+    except:
+        log.exception('workflow failed')
+        raise RuntimeError('workflow failed')
 
-    proc.communicate()
-    log.info('workflow process terminated')
-    if proc.returncode:
-        log.error('workflow failed, raising error')
-        raise RuntimeError('failed workflow process return code {}'.format(proc.returncode))
     log.info('workflow succeeded, workflow plugin end.')
