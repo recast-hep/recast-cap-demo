@@ -6,7 +6,8 @@ from yadage.utils import WithJsonRefEncoder
 from adage.trackers import SimpleReportTracker
 
 class EmitTracker(object):
-    def __init__(self,jobguid = None):
+    def __init__(self,jobguid):
+        self.jobguid = jobguid
         self.tracker = SimpleReportTracker('WFLOWSERVICELOG',120)
 
     def initialize(self,adageobj):
