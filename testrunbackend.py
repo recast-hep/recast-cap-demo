@@ -16,7 +16,7 @@ def main(workflow,url,results,toplevel,parameter,cleanup):
         'jobguid': 'dummyjobid',
         'shipout_base':'shipout_dummy',
         'inputURL':url,
-
+        'inputAuth': True,
         'backend':'testbackend',
         'entry_point':'wflowyadageworker.backendtasks:run_workflow',
         'resultlist':results.split(','),
