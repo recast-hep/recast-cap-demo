@@ -25,7 +25,7 @@ class EmitTracker(object):
 
     def send_state(self,adageobj):
         serialized = json.dumps(adageobj.json(), cls=WithJsonRefEncoder, sort_keys=True)
-        tosend = jq.jq('{dag: {nodes: [.dag.nodes[]|{state: .state, id: .id, name: .name, proxy: .proxy}], edges: .dag.edges}}').transform(
+        tosend = jq.jq('{dag: {nodes: [.dag.nodes[]|{state: .state, id: .id, name: .name, proxy: .proxy, task: {metadata: .task.metadata} }], edges: .dag.edges}}').transform(
             json.loads(serialized)
         )
         wflowcelery.messaging.emit(self.jobguid,'wflow_state',{'wflow_type': 'yadage', 'state': tosend})
