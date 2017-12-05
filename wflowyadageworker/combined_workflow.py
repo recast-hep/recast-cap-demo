@@ -1,6 +1,6 @@
 import yaml
 import yadage.workflow_loader
-from yadage.utils import discover_initfiles,WithJsonRefEncoder
+from yadage.utils import WithJsonRefEncoder
 import json
 import pkg_resources
 import os
@@ -33,6 +33,7 @@ def workflow_options(ctx,workdir):
 
     input_path = '{}/inputs/input.yaml'.format(workdir)
 
+    raise RuntimeError('yadage version change not carried over to combined workflows yet')
     upstream_pars = ctx['combinedspec']['adapter'].get('preset_pars',{})
     if os.path.exists(input_path):
         upstream_pars = yaml.load(open(input_path))
