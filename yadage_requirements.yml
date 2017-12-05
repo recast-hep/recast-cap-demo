@@ -1,4 +1,4 @@
 adage==0.8.3
-packtivity==0.8.21
-yadage[viz]==0.12.19
-yadage-schemas==0.7.14
+packtivity==0.9.4
+yadage[viz]==0.13.2
+yadage-schemas==0.7.16
