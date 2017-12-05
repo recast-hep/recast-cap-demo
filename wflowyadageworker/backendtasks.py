@@ -21,7 +21,7 @@ def run_workflow(ctx):
     log.info('running yadage workflow for context: %s', ctx)
     jobguid = ctx['jobguid']
 
-    workdir = os.path.join('workdirs',jobguid)
+    workdir = ctx['workdir']
 
     backend = os.environ.get('WFLOW_YADAGEBACKEND','multiproc:auto')
     backendopts = {}
