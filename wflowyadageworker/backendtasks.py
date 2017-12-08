@@ -31,8 +31,10 @@ def run_workflow(ctx):
     yadage_kwargs = dict(
         dataarg = workdir,
         backend = yadage.utils.setupbackend_fromstring(backend,backendopts),
-        updateinterval = os.environ.get('WFLOW_YADAGEUPDATE',30),
+        updateinterval = float(os.environ.get('WFLOW_YADAGEUPDATE',30)),
     )
+
+    log.info('yadabe base settings %s', yadage_kwargs)
 
     if 'combinedspec' in ctx:
         additional_kwargs = combined_workflow.workflow_options(ctx,workdir)
