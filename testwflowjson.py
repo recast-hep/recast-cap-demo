@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-import wflowcelery.backendtasks
+import wflowbackend.backendtasks
 import yadageschemas
 @click.command()
 @click.argument('workflow')
@@ -20,10 +20,10 @@ def main(workflow,url,results,toplevel,cleanup):
         'workflow_json': yadageschemas.load(workflow, toplevel, 'yadage/workflow-schema')
     }
 
-    wflowcelery.backendtasks.run_analysis_standalone(
-        wflowcelery.backendtasks.setupFromURL,
-        wflowcelery.backendtasks.dummy_onsuccess,
-        wflowcelery.backendtasks.cleanup if cleanup else lambda ctx: None,
+    wflowbackend.backendtasks.run_analysis_standalone(
+        wflowbackend.backendtasks.setupFromURL,
+        wflowbackend.backendtasks.dummy_onsuccess,
+        wflowbackend.backendtasks.cleanup if cleanup else lambda ctx: None,
         ctx,
         redislogging = False
     )

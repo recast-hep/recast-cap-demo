@@ -1,7 +1,7 @@
 import json
 import jq
 import os
-import wflowcelery.messaging
+import wflowbackend.messaging
 from yadage.utils import WithJsonRefEncoder
 from adage.trackers import SimpleReportTracker
 
@@ -28,4 +28,4 @@ class EmitTracker(object):
         tosend = jq.jq('{dag: {nodes: [.dag.nodes[]|{state: .state, id: .id, name: .name, proxy: .proxy, task: {metadata: .task.metadata} }], edges: .dag.edges}}').transform(
             json.loads(serialized)
         )
-        wflowcelery.messaging.emit(self.jobguid,'wflow_state',{'wflow_type': 'yadage', 'state': tosend})
+        wflowbackend.messaging.emit(self.jobguid,'wflow_state',{'wflow_type': 'yadage', 'state': tosend})

@@ -24,9 +24,11 @@ RUN curl https://bootstrap.pypa.io/get-pip.py | python - && \
     curl -sSL https://get.docker.com/builds/Linux/x86_64/docker-1.9.1  -o /usr/bin/docker && chmod +x /usr/bin/docker && \
     curl -sSL https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 -o /usr/bin/jq && chmod +x /usr/bin/jq
 
-ARG WFLOWCELERYTAG=master
+RUN echo bus55
+
+ARG WFLOW_BACKEND_TAG=master
 RUN pip install celery
-RUN pip install https://github.com/recast-hep/wflow-celery/archive/${WFLOWCELERYTAG}.zip --process-dependency-links
+RUN pip install https://github.com/recast-hep/wflow-backend/archive/${WFLOW_BACKEND_TAG}.zip --process-dependency-links
 
 COPY . /yadage_plugin
 WORKDIR /yadage_plugin

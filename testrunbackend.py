@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import click
-import wflowcelery.backendtasks
+import wflowbackend.backendtasks
 import yadage.utils as utils
 @click.command()
 @click.argument('workflow')
@@ -25,10 +25,10 @@ def main(workflow,url,results,toplevel,parameter,cleanup):
         'toplevel':toplevel,
     }
 
-    wflowcelery.backendtasks.run_analysis_standalone(
-        wflowcelery.backendtasks.setupFromURL,
-        wflowcelery.backendtasks.dummy_onsuccess,
-        wflowcelery.backendtasks.cleanup if cleanup else lambda ctx: None,
+    wflowbackend.backendtasks.run_analysis_standalone(
+        wflowbackend.backendtasks.setupFromURL,
+        wflowbackend.backendtasks.dummy_onsuccess,
+        wflowbackend.backendtasks.cleanup if cleanup else lambda ctx: None,
         ctx,
         redislogging = False
     )

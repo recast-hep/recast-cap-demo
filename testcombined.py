@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import click
 import logging
-import wflowcelery.backendtasks
+import wflowbackend.backendtasks
 
 specs = {}
 
@@ -82,10 +82,10 @@ def main(url,results,specname,cleanup):
         'combinedspec': specs[specname]
     }
 
-    wflowcelery.backendtasks.run_analysis_standalone(
-        wflowcelery.backendtasks.setupFromURL,
-        wflowcelery.backendtasks.dummy_onsuccess,
-        wflowcelery.backendtasks.cleanup if cleanup else lambda ctx: None,
+    wflowbackend.backendtasks.run_analysis_standalone(
+        wflowbackend.backendtasks.setupFromURL,
+        wflowbackend.backendtasks.dummy_onsuccess,
+        wflowbackend.backendtasks.cleanup if cleanup else lambda ctx: None,
         ctx,
         redislogging = False
     )
