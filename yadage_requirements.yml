@@ -2,3 +2,4 @@ adage==0.8.3
 packtivity==0.10.0
 yadage[viz]==0.13.3
 yadage-schemas==0.7.16
+yadage-httpctrl-server==0.0.1
