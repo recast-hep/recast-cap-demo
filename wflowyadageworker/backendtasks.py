@@ -1,11 +1,7 @@
 import logging
-import subprocess
 import os
 import yaml
-import json
-import shlex
 import wflowyadageworker.tracker
-import logging
 
 import simple_workflow
 import simple_workflow_fromjson
@@ -21,6 +17,8 @@ def init_workflow(ctx):
     log.info('initializing interactive yadage workflow: %s', ctx)
     jobguid = ctx['jobguid']
     workdir = ctx['workdir']
+
+    log.info('workflow id: %s', jobguid)
 
     if os.path.exists(os.path.join(workdir,'_yadage')):
         log.info('already initialized')
@@ -45,6 +43,12 @@ def init_workflow(ctx):
     yadage_kwargs.update(**additional_kwargs)
     log.info('additional keyword arguments were %s', additional_kwargs)
     log.info('executing yadage initalization: %s',yadage_kwargs)
+
+    import yadage.state_providers.localposix
+    yadage.state_providers.localposix.setup_provider(
+        'local:{}'.format(yadage_kwargs['dataarg']), yadage_kwargs['dataopts']
+    ).json()
+
     yadage.steering_api.init_steering(**yadage_kwargs)
 
 def run_workflow(ctx):
