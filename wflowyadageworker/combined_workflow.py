@@ -34,12 +34,3 @@ def workflow_options(ctx,workdir):
     input_path = '{}/inputs/input.yaml'.format(workdir)
 
     raise RuntimeError('yadage version change not carried over to combined workflows yet')
-    #upstream_pars = ctx['combinedspec']['adapter'].get('preset_pars',{})
-    #if os.path.exists(input_path):
-    #    upstream_pars = yaml.load(open(input_path))
-    #    upstream_pars = discover_initfiles(upstream_pars,os.path.join(os.path.realpath(workdir),'inputs'))
-    #finalized = finalize_combination(prepped,upstream_pars)
-    #
-    #return dict(
-    #    workflow_json = json.loads(json.dumps(finalized, cls = WithJsonRefEncoder))
-    #)

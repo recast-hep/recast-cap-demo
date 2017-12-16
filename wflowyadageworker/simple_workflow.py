@@ -20,7 +20,6 @@ def workflow_options(ctx,workdir):
     else:
         log.info('no workflow parameters in init dir')
 
-
     if not os.path.exists(workdir):
         log.error('workdirectory: %s does not exist',workdir)
 

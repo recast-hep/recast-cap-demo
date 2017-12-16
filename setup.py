@@ -21,6 +21,9 @@ setup(
     'jq',
   ],
   entry_points = {
+      'console_scripts': [
+          'wflow-yadage-server=wflowyadageworker.interactive_server:main',
+      ],
   },
   dependency_links = [
   ]
