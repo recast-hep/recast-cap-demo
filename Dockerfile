@@ -38,6 +38,6 @@ RUN pip install https://github.com/recast-hep/wflow-backend/archive/${WFLOW_BACK
 
 COPY . /yadage_plugin
 WORKDIR /yadage_plugin
-RUN cd wflowyadageworker/resources/server_static; bower install
+RUN mkdir -p wflowyadageworker/resources/server_static; cd wflowyadageworker/resources/server_static; bower install
 RUN pip install -r yadage_requirements.yml
 RUN pip install -e . --process-dependency-links
