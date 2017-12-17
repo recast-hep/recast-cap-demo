@@ -35,6 +35,7 @@
           method: 'POST',
           contentType: 'application/json',
           success: function(data){
+            $('#overlay').show()
             console.log(data)
           },
           data: JSON.stringify({status: {ready: true, success: isSuccess}})
@@ -198,6 +199,9 @@
 
     </script>
     <style>
+      #overlay {
+        background-color: rgba(0, 0, 0, 0.8); height: 100%; width: 100%; position: absolute;color: grey; text-align: center; display: none;
+      }
       body {
         font-family: helvetica;
         font-size: 14px;
@@ -219,6 +223,8 @@
   </head>
 
   <body>
+
+      <div id="overlay">this interactive session has been shut down.</div>
       <h1>HELLO MY FRIEND</h1>
       <div>
         <button onclick="shutdown(true)">done with success</button>
