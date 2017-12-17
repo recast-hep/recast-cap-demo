@@ -185,10 +185,10 @@
 
 
 
+            var controlserver = window.location.origin + window.location.pathname.replace('/ui','');
+            console.log('let us try this ' + controlserver)
 
-            console.log('let us try this')
-
-            yadage.rest_controller.connect(window.location.origin + window.location.pathname)
+            yadage.rest_controller.connect(controlserver)
 
 
             sync_and_draw(yadage)
