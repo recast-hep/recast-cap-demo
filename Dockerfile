@@ -28,7 +28,7 @@ RUN curl https://bootstrap.pypa.io/get-pip.py | python - && \
 RUN dnf install -y nodejs
 RUN npm install -g bower;  echo '{ "allow_root": true }' > /root/.bowerrc
 
-RUN echo bus55t12
+RUN echo bus55t1211
 
 ARG WFLOW_BACKEND_TAG=master
 RUN pip install celery

@@ -45,9 +45,9 @@ def init_workflow(ctx):
     log.info('executing yadage initalization: %s',yadage_kwargs)
 
     import yadage.state_providers.localposix
-    yadage.state_providers.localposix.setup_provider(
+    log.info(yadage.state_providers.localposix.setup_provider(
         'local:{}'.format(yadage_kwargs['dataarg']), yadage_kwargs['dataopts']
-    ).json()
+    ).json())
 
     yadage.steering_api.init_steering(**yadage_kwargs)
 

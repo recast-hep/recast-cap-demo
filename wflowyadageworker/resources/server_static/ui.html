@@ -64,12 +64,9 @@
           ctrl_read_data.submittable_nodes = submittable[0]
           ctrl_read_data.applicable_rules = applicable[0]
 
-          html = `
-          `
-
           ctrl_read_data.applicable_rules.forEach(function(v){
 
-
+            $('#yadage-openrules').html('') //reset
             yadage.rest_controller.rule(v).done(function(details,_,_){
               $('#yadage-openrules').append(`
                 <li>
@@ -190,7 +187,7 @@
 
             console.log('let us try this')
 
-            yadage.rest_controller.connect(window.location.origin)
+            yadage.rest_controller.connect(window.location.origin + window.location.pathname)
 
 
             sync_and_draw(yadage)
