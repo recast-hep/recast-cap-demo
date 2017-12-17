@@ -31,7 +31,7 @@
 
       function shutdown(isSuccess){
         $.ajax({
-          url: '/finalize',
+          url: window.location.origin + window.location.pathname + '/finalize',
           method: 'POST',
           contentType: 'application/json',
           success: function(data){
