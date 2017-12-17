@@ -14,7 +14,7 @@ import json
 static_path = pkg_resources.resource_filename('wflowyadageworker', 'resources/server_static')
 app = Flask('interactive_yadage',static_folder=static_path, static_url_path='/static')
 
-@app.route('/')
+@app.route('/ui')
 def home():
     return app.send_static_file('ui.html')
 

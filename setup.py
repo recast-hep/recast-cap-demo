@@ -16,6 +16,7 @@ setup(
     'pyyaml',
     'jsonref',
     'yadage',
+    'yadage-httpctrl-server',
     'jsonschema',
     'pyyaml',
     'jq',

@@ -7,8 +7,8 @@
 
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
 
-    <script src="/static/bower_components/requirejs/require.js"></script>
-    <script src="/static/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="static/bower_components/requirejs/require.js"></script>
+    <script src="static/bower_components/jquery/dist/jquery.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" charset="utf-8"></script>
 
@@ -16,11 +16,11 @@
 
     requirejs.config({
         paths: {
-          'jquery': "/static/bower_components/jquery/dist/jquery.min",
-          'yadage-js': '/static/bower_components/yadage-js/yadage-js',
-          'cytoscape': '/static/bower_components/cytoscape/dist/cytoscape',
-          'cytoscape-dagre': '/static/bower_components/cytoscape-dagre/cytoscape-dagre',
-          'cytoscape-expand-collapse': '/static/bower_components/cytoscape-expand-collapse/cytoscape-expand-collapse',
+          'jquery': "static/bower_components/jquery/dist/jquery.min",
+          'yadage-js': 'static/bower_components/yadage-js/yadage-js',
+          'cytoscape': 'static/bower_components/cytoscape/dist/cytoscape',
+          'cytoscape-dagre': 'static/bower_components/cytoscape-dagre/cytoscape-dagre',
+          'cytoscape-expand-collapse': 'static/bower_components/cytoscape-expand-collapse/cytoscape-expand-collapse',
           'dagre': 'https://cdn.rawgit.com/cpettitt/dagre/v0.7.4/dist/dagre'
         }
     });
@@ -31,7 +31,7 @@
 
       function shutdown(isSuccess){
         $.ajax({
-          url: window.location.origin + window.location.pathname + '/finalize',
+          url: 'finalize',
           method: 'POST',
           contentType: 'application/json',
           success: function(data){
@@ -223,9 +223,8 @@
   </head>
 
   <body>
-
       <div id="overlay">this interactive session has been shut down.</div>
-      <h1>HELLO MY FRIEND</h1>
+      <h1>Interactive Yadgage Workspace</h1>
       <div>
         <button onclick="shutdown(true)">done with success</button>
         <button onclick="shutdown(false)">done with failure</button>
