@@ -12,6 +12,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" charset="utf-8"></script>
 
+    <link rel="stylesheet" href="static/bower_components/bootstrap/dist/css/bootstrap.min.css">
+
     <script>
 
     requirejs.config({
@@ -79,7 +81,7 @@
                     <dt>Scheduler</dt>
                     <dd>${details.rule.scheduler.scheduler_type}</dd>
                   </dl>
-                  <button data-ruleid="${details.id}" id="rule-apply-${details.id}">Apply</button>
+                  <button type="button" class="btn-sm btn-info" data-ruleid="${details.id}" id="rule-apply-${details.id}">Apply</button>
                 </li>
               `)
 
@@ -145,8 +147,8 @@
                   <dt>Node</dt>
                   <dd>${details.name}</dd>
                 </dl>
-                <button data-nodeid="${details.id}" id="node-submit-${details.id}">Submit</button>
-                <button data-nodeid="${details.id}" id="node-reset-${details.id}">Reset</button>
+                <button type="button" class="btn-sm btn-info" data-nodeid="${details.id}" id="node-submit-${details.id}">Submit</button>
+                <button type="button" class="btn-sm btn-info" data-nodeid="${details.id}" id="node-reset-${details.id}">Reset</button>
               `
 
 
@@ -207,16 +209,11 @@
         font-size: 14px;
       }
       #yadage-viz {
-        width: 50%;
+        width: 100%;
         height: 50%;
         border: 1px solid black;
         left: 0;
         top: 0;
-        z-index: 999;
-      }
-      h1 {
-        opacity: 0.5;
-        font-size: 1em;
       }
     </style>
 
@@ -224,29 +221,61 @@
 
   <body>
       <div id="overlay">this interactive session has been shut down.</div>
-      <h1>Interactive Yadgage Workspace</h1>
-      <div>
-        <button onclick="shutdown(true)">done with success</button>
-        <button onclick="shutdown(false)">done with failure</button>
-      </div>
 
-      <div>
-        <div>
-          <button onclick="sync_and_draw(require('yadage-js'))">sync</button>
-          <button onclick="require('yadage-js').redraw_graph();">redraw</button>
-          <button onclick="require('yadage-js').relayout();">relayout</button>
-          <button onclick="require('yadage-js').collapse_api.collapseAll();">collapse</button>
-          <button onclick="require('yadage-js').collapse_api.expandAll();">expand</button>
-        </div>
-        <div id="yadage-viz"></div>
-        <div id="yadage-detail"></div>
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Interactive Yadage</a>
+          </div>
+        </div><!-- /.container-fluid -->
+      </nav>
 
-        <div>
-          <h3>Open Stages</h3>
-          <ul id="yadage-openrules">
-          </ul>
+      <div id="" class="row">
+        <div id="maincontainer" class="col-lg-8">
+
+
+        <div class="row">
+          <div class="col-lg-12" style="margin: 1em;">
+            <button type="button" class="btn btn-success" onclick="shutdown(true)">Shutdown Workspace as Success</button>
+            <button type="button" class="btn btn-danger" onclick="shutdown(false)">Shutdown Workspace as Failure</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12" style="margin: 1em;">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-12" style="margin: 1em;">
+            <div style="margin: 1em;">
+              <button type="button" class="btn-sm btn-info" onclick="sync_and_draw(require('yadage-js'))">sync</button>
+              <button type="button" class="btn-sm btn-info" onclick="require('yadage-js').redraw_graph();">redraw</button>
+              <button type="button" class="btn-sm btn-info" onclick="require('yadage-js').relayout();">relayout</button>
+              <button type="button" class="btn-sm btn-info" onclick="require('yadage-js').collapse_api.collapseAll();">collapse</button>
+              <button type="button" class="btn-sm btn-info" onclick="require('yadage-js').collapse_api.expandAll();">expand</button>
+            </div>
+            <div id="yadage-viz"></div>
+            <div id="yadage-detail"></div>
+
+            <div>
+              <h3>Open Stages</h3>
+              <ul id="yadage-openrules">
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+
   </body>
 
 </html>

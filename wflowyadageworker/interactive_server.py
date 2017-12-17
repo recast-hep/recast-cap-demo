@@ -35,6 +35,7 @@ def finalize():
 
 def main():
     logging.basicConfig(level = logging.INFO)
+    app.run(host='0.0.0.0', port = 8888)
     while True:
         try:
             log.exception('getting context')
