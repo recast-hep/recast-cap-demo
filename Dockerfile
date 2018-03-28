@@ -31,13 +31,14 @@ RUN npm install -g bower;  echo '{ "allow_root": true }' > /root/.bowerrc
 RUN echo bus55t1211
 
 ARG WFLOW_BACKEND_TAG=master
-RUN pip install celery
+RUN pip install kubernetes
 
 
 RUN pip install https://github.com/recast-hep/wflow-backend/archive/${WFLOW_BACKEND_TAG}.zip --process-dependency-links
+WORKDIR /yadage_plugin
+COPY yadage_requirements.yml /yadage_plugin/yadage_requirements.yml
+RUN pip install -r yadage_requirements.yml
 
 COPY . /yadage_plugin
-WORKDIR /yadage_plugin
 RUN cd wflowyadageworker/resources/server_static; bower install
-RUN pip install -r yadage_requirements.yml
 RUN pip install -e . --process-dependency-links

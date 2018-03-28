@@ -52,11 +52,30 @@ def main():
         log.info('sleeping for %s seconds until we try again', nseconds)
         time.sleep(nseconds)
     log.info('acquired context %s', app.config['context'])
-    log.info('starting server')
 
     yadagestage = os.path.join(app.config['context']['workdir'],'_yadage','yadage_state.json')
-    init_app(app, 'filebacked:{}'.format(yadagestage), {}, 'celery')
-    app.run(host='0.0.0.0', port = 8888)
+    while True:
+        if os.path.exists(yadagestage):
+            break
+        nseconds = 5
+        time.sleep(nseconds)
+        log.info('waiting for backend-server to setup the workdir')
+
+    log.info('state at: {}. exists: {}'.format(yadagestage, os.path.exists(yadagestage)))
+
+    backend = 'py:sharedstatekube:backend'
+    backendopts = {
+        'optsyaml':'/yadageconfig/backendopts'
+    }
+
+
+
+    log.info('initializing flask app')
+    init_app(app, 'filebacked:{}'.format(yadagestage), {}, backend, backendopts)
+
+    log.info('starting server')
+    app.debug = True
+    app.run(host='0.0.0.0', port = 8888, threaded=True)
 
 if __name__ == '__main__':
     main()

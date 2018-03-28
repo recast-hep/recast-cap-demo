@@ -7,7 +7,7 @@ import simple_workflow
 import simple_workflow_fromjson
 import combined_workflow
 
-import yadage.steering_api
+from yadage.steering_object import YadageSteering
 import yadage.utils
 
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +22,7 @@ def init_workflow(ctx):
 
     if os.path.exists(os.path.join(workdir,'_yadage')):
         log.info('already initialized')
+        assert os.path.exists(wflow_state_file)
 
     wflow_state_file = os.path.join(ctx['workdir'],'_yadage','yadage_state.json')
 
@@ -44,20 +45,18 @@ def init_workflow(ctx):
     log.info('additional keyword arguments were %s', additional_kwargs)
     log.info('executing yadage initalization: %s',yadage_kwargs)
 
-    import yadage.state_providers.localposix
-    log.info(yadage.state_providers.localposix.setup_provider(
-        'local:{}'.format(yadage_kwargs['dataarg']), yadage_kwargs['dataopts']
-    ).json())
-
-    yadage.steering_api.init_steering(**yadage_kwargs)
+    ys = YadageSteering.create(**yadage_kwargs)
 
 def run_workflow(ctx):
     log.info('running yadage workflow for context: %s', ctx)
+
     jobguid = ctx['jobguid']
     workdir = ctx['workdir']
 
-    backend = os.environ.get('WFLOW_YADAGEBACKEND','multiproc:auto')
-    backendopts = {}
+    backend = 'py:sharedstatekube:backend'
+    backendopts = {
+        'optsyaml':'/yadageconfig/backendopts'
+    }
 
     log.info('connecting backend: %s', backend)
 
@@ -84,8 +83,6 @@ def run_workflow(ctx):
     log.info('additional keyword arguments were %s', additional_kwargs)
     try:
         log.info('executing yadage workflows with: %s',yadage_kwargs)
-
-
         with yadage.steering_api.steering_ctx(**yadage_kwargs) as ys:
             if yaml.load(os.environ.get('WFLOW_PLUGIN_TRACK','true')):
                 ys.adage_argument(additional_trackers = [
