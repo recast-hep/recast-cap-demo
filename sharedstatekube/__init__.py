@@ -41,6 +41,9 @@ class KubernetesBackend(object):
             import urllib3
             urllib3.disable_warnings()
 
+    def get_job_labels(self, jobid):
+        return {k:v.format(jobid = jobid) for k,v in self.resource_labels.items()}
+
     def submit(self, job, env, state, metadata):
         if 'command' in job:
             stdin = False
@@ -61,7 +64,7 @@ class KubernetesBackend(object):
                   )
         jobspec    = specs[0]
         configmaps = specs[1:]
-        jobid = jobspec['metadata']['name']
+        jobid = jobspec['metadata']['labels']['jobid']
 
         thejob = client.V1Job(
             api_version = jobspec['apiVersion'],
@@ -75,7 +78,7 @@ class KubernetesBackend(object):
             cm = client.V1ConfigMap(
                 api_version = 'v1',
                 kind = 'ConfigMap',
-                metadata = {'name': cm_spec['name'], 'namespace': self.namespace, 'labels': self.resource_labels},
+                metadata = {'name': cm_spec['name'], 'namespace': self.namespace, 'labels': self.get_job_labels(jobid)},
                 data = cm_spec['data']
             )
             client.CoreV1Api().create_namespaced_config_map(self.namespace,cm)
@@ -90,15 +93,16 @@ class KubernetesBackend(object):
 
     def delete_created_resources(self, job_proxy):
         job_id  = job_proxy['job_id']
+        job_name = self.make_job_name(job_id)
 
         try:
-            j = client.BatchV1Api().read_namespaced_job(job_id,self.namespace)
-            client.BatchV1Api().delete_namespaced_job(job_id,self.namespace,j.spec)
+            j = client.BatchV1Api().read_namespaced_job(job_name,self.namespace)
+            client.BatchV1Api().delete_namespaced_job(job_name,self.namespace,j.spec)
         except client.rest.ApiException:
             pass
 
         try:
-            client.CoreV1Api().delete_collection_namespaced_pod(self.namespace, label_selector = 'job-name={}'.format(job_id))
+            client.CoreV1Api().delete_collection_namespaced_pod(self.namespace, label_selector = 'job-name={}'.format(job_name))
         except client.rest.ApiException:
             pass
 
@@ -114,7 +118,9 @@ class KubernetesBackend(object):
             return True
 
         job_id  = job_proxy['job_id']
-        jobstatus = client.BatchV1Api().read_namespaced_job(job_id,self.namespace).status
+        job_name = self.make_job_name(job_id)
+
+        jobstatus = client.BatchV1Api().read_namespaced_job(job_name,self.namespace).status
         job_proxy['last_success'] = jobstatus.succeeded
         job_proxy['last_failed']  = jobstatus.failed
         ready =  job_proxy['last_success'] or job_proxy['last_failed']
@@ -178,10 +184,10 @@ class KubernetesBackend(object):
             })
         return container_mounts, volumes
 
-    def make_par_mount(self, job_uuid, parmounts):
+    def make_par_mount(self, job_id, parmounts):
         parmount_configmap_contmount = []
         configmapspec = {
-            'name': 'parmount-{}'.format(job_uuid),
+            'name': 'wflow-parmount-{}'.format(job_id),
             'data': {}
         }
 
@@ -213,8 +219,13 @@ class KubernetesBackend(object):
 
         return parmount_configmap_contmount, vols_by_dir_name.values(), configmapspec
 
+    def make_job_name(self, job_id):
+        return  'wflow-job-{}'.format(job_id)
+
     def job_specs(self, argv, image, imagetag,state, cvmfs, parmounts, auth):
-        job_uuid = 'wflow-job-{}'.format(str(uuid.uuid4()))
+        job_id = str(uuid.uuid4())
+
+        job_name = self.make_job_name(job_id)
 
         container_mounts_state, volumes_state = self.state_binds(state)
 
@@ -232,7 +243,7 @@ class KubernetesBackend(object):
             volumes          += volumes_auth
 
         if parmounts:
-            container_mounts_pm, volumes_pm, pm_cm_spec = self.make_par_mount(job_uuid, parmounts)
+            container_mounts_pm, volumes_pm, pm_cm_spec = self.make_par_mount(job_id, parmounts)
             container_mounts += container_mounts_pm
             volumes += volumes_pm
 
@@ -254,23 +265,23 @@ class KubernetesBackend(object):
                     "image": ':'.join([image,imagetag]),
                     "command": argv,
                     "volumeMounts": container_mounts,
-                    "name": job_uuid,
+                    "name": job_name,
                     "resources": self.resources_opts
                   }
                 ],
                 "volumes": volumes
               },
               "metadata": {
-                "name": job_uuid,
+                "name": job_name,
                 "namespace": self.namespace,
-                "labels": self.resource_labels
+                "labels": self.get_job_labels(job_id)
               }
             }
           },
           "metadata": {
-            "name": job_uuid,
+            "name": job_name,
             "namespace": self.namespace,
-            "labels": self.resource_labels
+            "labels": self.get_job_labels(job_id)
           }
         })
         if parmounts:

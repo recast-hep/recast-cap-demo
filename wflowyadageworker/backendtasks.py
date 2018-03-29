@@ -7,6 +7,7 @@ import simple_workflow
 import simple_workflow_fromjson
 import combined_workflow
 
+from yadage.steering_api import steering_ctx
 from yadage.steering_object import YadageSteering
 import yadage.utils
 
@@ -20,11 +21,11 @@ def init_workflow(ctx):
 
     log.info('workflow id: %s', jobguid)
 
+    wflow_state_file = os.path.join(ctx['workdir'],'_yadage','yadage_state.json')
     if os.path.exists(os.path.join(workdir,'_yadage')):
         log.info('already initialized')
         assert os.path.exists(wflow_state_file)
 
-    wflow_state_file = os.path.join(ctx['workdir'],'_yadage','yadage_state.json')
 
     yadage_kwargs = dict(
         dataarg = workdir,
@@ -83,7 +84,7 @@ def run_workflow(ctx):
     log.info('additional keyword arguments were %s', additional_kwargs)
     try:
         log.info('executing yadage workflows with: %s',yadage_kwargs)
-        with yadage.steering_api.steering_ctx(**yadage_kwargs) as ys:
+        with steering_ctx(**yadage_kwargs) as ys:
             if yaml.load(os.environ.get('WFLOW_PLUGIN_TRACK','true')):
                 ys.adage_argument(additional_trackers = [
                     wflowyadageworker.tracker.EmitTracker(jobguid)
