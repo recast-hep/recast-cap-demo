@@ -1,8 +1,6 @@
 import logging
 import os
 import yaml
-import wflowyadageworker.tracker
-
 import simple_workflow
 import simple_workflow_fromjson
 import combined_workflow
