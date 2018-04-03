@@ -1,16 +1,16 @@
 import os
 import socket
-import logging
 import redis
+import redis.exceptions
+
 import json
+import logging
+
+log = logging.getLogger(__name__)
 
 class RedisHandler(logging.StreamHandler):
     def __init__(self,jobid,topic):
-    	self.red = redis.StrictRedis(
-    		host = os.environ.get('PACKTIVITY_LOGGER_HOST','localhost'),
-    		port = os.environ.get('PACKTIVITY_LOGGER_PORT',6379),
-    		db = os.environ.get('PACKTIVITY_LOGGER_DB',0)
-    	)
+        self.red = redis.StrictRedis.from_url('PACKTIVITY_LOGGER_URL','redis://localhost')
     	self.jobid = jobid
     	self.topic = topic
         logging.StreamHandler.__init__(self)
@@ -24,7 +24,11 @@ class RedisHandler(logging.StreamHandler):
             'topic': self.topic,
             'host': socket.gethostname()
         }
-    	self.red.publish(os.environ.get('PACKTIVITY_LOGGER_CHANNEL','logstash:in'),json.dumps(data))
+        try:
+        	self.red.publish(os.environ.get('PACKTIVITY_LOGGER_CHANNEL','logstash:in'),json.dumps(data))
+        except redis.exceptions.ConnectionError:
+            log.warning('publishing workflow state to redis failed')
+
 
 formatter = logging.Formatter('%(message)s')
 def add_handlers(log,metadata,state,topic):

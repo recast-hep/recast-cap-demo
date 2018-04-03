@@ -28,12 +28,19 @@ RUN curl https://bootstrap.pypa.io/get-pip.py | python - && \
 RUN dnf install -y nodejs
 RUN npm install -g bower;  echo '{ "allow_root": true }' > /root/.bowerrc
 
+
+RUN pip install \
+    decorator networkx functools32 jsonschema jsonref click jsonpointer ply jsonpath-rw jq psutil \
+    funcsigs pbr mock checksumdir pyparsing pydot2 pygraphviz pydotplus itsdangerous MarkupSafe \
+    Jinja2 Werkzeug flask pyOpenSSL
+
 RUN echo bus55t1211
 
 ARG WFLOW_BACKEND_TAG=master
 RUN pip install kubernetes
 
 
+RUN echo bust
 RUN pip install https://github.com/recast-hep/wflow-backend/archive/${WFLOW_BACKEND_TAG}.zip --process-dependency-links
 WORKDIR /yadage_plugin
 COPY yadage_requirements.yml /yadage_plugin/yadage_requirements.yml
