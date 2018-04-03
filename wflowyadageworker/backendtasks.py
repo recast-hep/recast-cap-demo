@@ -1,10 +1,10 @@
 import logging
 import os
-import yaml
 import simple_workflow
 import simple_workflow_fromjson
 import combined_workflow
 
+from wflowyadageworker.tracker import EmitTracker
 from yadage.steering_api import steering_ctx
 from yadage.steering_object import YadageSteering
 import yadage.utils
@@ -44,6 +44,7 @@ def init_workflow(ctx):
     log.info('executing yadage initalization: %s',yadage_kwargs)
 
     ys = YadageSteering.create(**yadage_kwargs)
+    assert ys
 
 def run_workflow(ctx):
     log.info('running yadage workflow for context: %s', ctx)
@@ -82,7 +83,7 @@ def run_workflow(ctx):
     try:
         log.info('executing yadage workflows with: %s',yadage_kwargs)
         with steering_ctx(**yadage_kwargs) as ys:
-            pass
+            ys.adage_argument(additional_trackers = [EmitTracker(jobguid)])
     except:
         log.exception('workflow failed')
         raise RuntimeError('workflow failed')

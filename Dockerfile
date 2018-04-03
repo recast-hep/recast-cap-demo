@@ -40,7 +40,7 @@ ARG WFLOW_BACKEND_TAG=master
 RUN pip install kubernetes
 
 
-RUN echo bust
+RUN echo bust1
 RUN pip install https://github.com/recast-hep/wflow-backend/archive/${WFLOW_BACKEND_TAG}.zip --process-dependency-links
 WORKDIR /yadage_plugin
 COPY yadage_requirements.yml /yadage_plugin/yadage_requirements.yml
